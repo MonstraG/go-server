@@ -15,7 +15,7 @@ func LoggingMiddleware(next func(w http.ResponseWriter, r *http.Request)) func(w
 		start := time.Now()
 		log.Printf("Started %s %s", r.Method, r.URL.Path)
 		next(w, r)
-		log.Printf("Completed in %v", time.Since(start))
+		log.Printf("Completed %s %s in %v", r.Method, r.URL.Path, time.Since(start))
 	}
 }
 

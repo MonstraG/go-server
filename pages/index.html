@@ -8,12 +8,19 @@
 <h1>{{.PageTitle}}</h1>
 <ul>
     {{range .Todos}}
-    {{if .Done}}
-    <li>{{.Title}} (done)</li>
-    {{else}}
-    <li>{{.Title}}</li>
-    {{end}}
+    <li>
+        <label>
+            {{if .Done}}
+            <input type="checkbox" checked="checked" />
+            {{else}}
+            <input type="checkbox" />
+            {{end}}
+            <span>{{.Title}}</span>
+        </label>
+    </li>
     {{end}}
 </ul>
 </body>
 </html>
+
+<script src="/public/htmx.min.js"></script>
