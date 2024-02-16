@@ -15,19 +15,7 @@ func LoggingMiddleware(next func(w http.ResponseWriter, r *http.Request)) func(w
 		start := time.Now()
 		log.Printf("Started %s %s", r.Method, r.URL.Path)
 		next(w, r)
-		// todo: log status code
 		log.Printf("Completed in %v", time.Since(start))
-	}
-}
-
-// AnotherMiddleware is an example of additional middleware
-func AnotherMiddleware(next func(w http.ResponseWriter, r *http.Request)) func(w http.ResponseWriter, r *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
-		// Do something before
-		log.Println("Before handling request")
-		next(w, r)
-		// Do something after
-		log.Println("After handling request")
 	}
 }
 

@@ -12,7 +12,6 @@ func main() {
 
 	// Add middleware
 	app.Use(LoggingMiddleware)
-	app.Use(AnotherMiddleware)
 
 	// Add routes
 	app.HandleFunc("GET /{$}", pages.IndexHandler)
