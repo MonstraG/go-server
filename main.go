@@ -1,21 +1,17 @@
 package main
 
 import (
+	"example-go-server/pages"
 	"fmt"
 	"log"
 	"net/http"
 )
 
-func IndexHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprint(w, "Hello from route /index")
-}
+var address = ":8080"
 
 func main() {
-	http.HandleFunc("/index", IndexHandler)
+	http.HandleFunc("GET /{$}", pages.IndexHandler)
 
-	err := http.ListenAndServe(":8080", nil)
-	if err != nil {
-		log.Fatal("Failed to start http server: ", err)
-		return
-	}
+	log.Println(fmt.Sprintf("Starting server on http://localhost%s", address))
+	log.Fatal(http.ListenAndServe(address, nil))
 }
