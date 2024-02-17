@@ -3,6 +3,7 @@ package main
 import (
 	"go-server/pages"
 	"go-server/pages/index"
+	"go-server/pages/notFound"
 	"go-server/pages/todos"
 	"log"
 )
@@ -14,8 +15,11 @@ func main() {
 
 	app.Use(LoggingMiddleware)
 
-	// pages or partials
+	// pages
 	app.HandleFunc("GET /{$}", index.GetHandler)
+	app.HandleFunc("GET /404", notFound.GetHandler)
+
+	// partials
 	app.HandleFunc("GET /todos", HtmxPartialMiddleware(todos.GetHandler))
 
 	// api

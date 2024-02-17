@@ -24,7 +24,7 @@ func LoggingMiddleware(next HandlerFn) HandlerFn {
 }
 
 // HtmxPartialMiddleware guards against direct browser navigations to partials
-// It returns 404 if request wasn't made by htmx (Hx-Request header)
+// It returns notFound if request wasn't made by htmx (Hx-Request header)
 func HtmxPartialMiddleware(next HandlerFn) HandlerFn {
 	return func(w http.ResponseWriter, r *http.Request) {
 		isHtmxRequest := r.Header.Get("Hx-Request") == "true"
