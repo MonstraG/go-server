@@ -13,9 +13,9 @@
     <li>
         <label>
             {{if .Done}}
-            <input type="checkbox" checked="checked" hx-post="/api/todo?id={{.Id}}" />
+            <input type="checkbox" checked="checked" hx-post="/api/todo/{{.Id}}" />
             {{else}}
-            <input type="checkbox" hx-post="/api/todo?id={{.Id}}" />
+            <input type="checkbox" hx-post="/api/todo/{{.Id}}" />
             {{end}}
             <span>{{.Title}}</span>
         </label>

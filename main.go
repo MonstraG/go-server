@@ -15,6 +15,7 @@ func main() {
 
 	// Add routes
 	app.HandleFunc("GET /{$}", pages.IndexHandler)
+	app.HandleFunc("POST /api/todo/{id}", pages.ApiTodoPost)
 	app.HandleFunc("GET /public/{path...}", pages.PublicFolderHandler)
 
 	log.Fatal(app.ListenAndServe(address))

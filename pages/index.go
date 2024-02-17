@@ -6,6 +6,15 @@ import (
 	"net/http"
 )
 
+var todos = TodoPageData{
+	PageTitle: "My TODO list",
+	Todos: []models.Todo{
+		{Id: 1, Title: "Task 1", Done: false},
+		{Id: 2, Title: "Task 2", Done: true},
+		{Id: 3, Title: "Task 3", Done: true},
+	},
+}
+
 type TodoPageData struct {
 	PageTitle string
 	Todos     []models.Todo
@@ -13,14 +22,23 @@ type TodoPageData struct {
 
 func IndexHandler(w http.ResponseWriter, _ *http.Request) {
 	var indexTemplate = template.Must(template.ParseFiles("pages/index.html"))
-	data := TodoPageData{
-		PageTitle: "My TODO list",
-		Todos: []models.Todo{
-			{Id: 1, Title: "Task 1", Done: false},
-			{Id: 2, Title: "Task 2", Done: true},
-			{Id: 3, Title: "Task 3", Done: true},
-		},
+
+	var _ = indexTemplate.Execute(w, todos)
+}
+
+func ApiTodoPost(w http.ResponseWriter, r *http.Request) {
+	id := r.PathValue("id")
+	if id == "" {
+		w.WriteHeader(400)
+		return
 	}
 
-	var _ = indexTemplate.Execute(w, data)
+	for i := range todos.Todos {
+		if todos.Todos[i].Id == i {
+			todos.Todos[i].Done = !todos.Todos[i].Done
+			break
+		}
+	}
+
+	w.WriteHeader(200)
 }
