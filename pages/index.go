@@ -89,8 +89,10 @@ func ApiTodosPostHandler(w http.ResponseWriter, r *http.Request) {
 	var done = r.Form.Get("done") == "on"
 
 	var todos = readTodos()
+
 	_, todo := findTodoById(todos, id)
 	todo.Done = done
+
 	writeTodos(todos)
 
 	w.WriteHeader(200)
@@ -109,15 +111,11 @@ func ApiTodosPutHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var todos = readTodos()
-	var maxId = 1
-	for _, todo := range *todos {
-		if maxId < todo.Id {
-			maxId = todo.Id
-		}
-	}
-	maxId += 1
 
-	*todos = append(*todos, Todo{Id: maxId, Title: title})
+	*todos = append(*todos, Todo{
+		Id:    generateNextId(todos),
+		Title: title,
+	})
 
 	writeTodos(todos)
 
@@ -159,13 +157,13 @@ func ApiTodosDelHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var todos = readTodos()
+
 	index, todo := findTodoById(todos, id)
 	if todo == nil {
 		log.Printf("Todo with id %d is not found", id)
 		w.WriteHeader(400)
 		return
 	}
-
 	*todos = removeAt(*todos, index)
 
 	writeTodos(todos)
@@ -187,4 +185,15 @@ func findTodoById(todos *[]Todo, id int) (int, *Todo) {
 		}
 	}
 	return 0, nil
+}
+
+// generateNextId finds next unoccupied id
+func generateNextId(todos *[]Todo) int {
+	var maxId = 0
+	for _, todo := range *todos {
+		if maxId < todo.Id {
+			maxId = todo.Id
+		}
+	}
+	return maxId + 1
 }
