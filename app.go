@@ -29,7 +29,8 @@ func HtmxPartialMiddleware(next HandlerFn) HandlerFn {
 	return func(w http.ResponseWriter, r *http.Request) {
 		isHtmxRequest := r.Header.Get("Hx-Request") == "true"
 		if !isHtmxRequest {
-			w.WriteHeader(404)
+			w.Header().Set("Location", "/404")
+			w.WriteHeader(http.StatusTemporaryRedirect)
 			return
 		}
 
