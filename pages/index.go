@@ -91,11 +91,20 @@ func ApiTodosPostHandler(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(400)
 		return
 	}
+
+	err = r.ParseForm()
+	if err != nil {
+		log.Println("Failed to parse form")
+		w.WriteHeader(400)
+		return
+	}
+	var done = r.Form.Get("done") == "on"
+
 	var todos = readTodos()
 
 	for i := range *todos {
 		if (*todos)[i].Id == id {
-			(*todos)[i].Done = !(*todos)[i].Done
+			(*todos)[i].Done = done
 			break
 		}
 	}
