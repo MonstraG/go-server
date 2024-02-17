@@ -1,6 +1,7 @@
 package todos
 
 import (
+	"encoding/json"
 	"go-server/query"
 	"html/template"
 	"log"
@@ -23,6 +24,18 @@ func GetHandler(w http.ResponseWriter, _ *http.Request) {
 	err := todosTemplate.Execute(w, pageModel)
 	if err != nil {
 		log.Fatal("Failed to render todos template", err)
+	}
+}
+
+func ApiGetHandler(w http.ResponseWriter, _ *http.Request) {
+	todos := readTodos()
+	bytes, err := json.Marshal(todos)
+	if err != nil {
+		log.Print("Failed to marshal todos", err)
+	}
+	_, err = w.Write(bytes)
+	if err != nil {
+		log.Print("Failed to write todos", err)
 	}
 }
 
