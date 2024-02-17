@@ -34,13 +34,13 @@ func NewApp() *App {
 }
 
 // Use adds middleware to the chain
-func (a *App) Use(mw Middleware) {
-	a.middlewares = append(a.middlewares, mw)
+func (app *App) Use(mw Middleware) {
+	app.middlewares = append(app.middlewares, mw)
 }
 
 // HandleFunc registers a handler for a specific route, applying all middlewares
-func (a *App) HandleFunc(pattern string, handlerFunc func(w http.ResponseWriter, r *http.Request)) {
-	a.mux.HandleFunc(pattern, applyMiddleware(handlerFunc, a.middlewares))
+func (app *App) HandleFunc(pattern string, handlerFunc func(w http.ResponseWriter, r *http.Request)) {
+	app.mux.HandleFunc(pattern, applyMiddleware(handlerFunc, app.middlewares))
 }
 
 // ApplyMiddleware applies multiple middleware to a http.Handler
@@ -51,7 +51,7 @@ func applyMiddleware(h func(w http.ResponseWriter, r *http.Request), middlewares
 	return h
 }
 
-func (a *App) ListenAndServe(address string) error {
+func (app *App) ListenAndServe(address string) error {
 	log.Println(fmt.Sprintf("Starting server on http://localhost%s", address))
-	return http.ListenAndServe(address, a.mux)
+	return http.ListenAndServe(address, app.mux)
 }
