@@ -1,5 +1,5 @@
 {{range .Todos}}
-    <li hx-delete="/api/todos/{{.Id}}" hx-trigger="click from:#delete-{{.Id}}">
+    <li hx-delete="/api/todos/{{.Id}}" hx-trigger="click from:#delete-{{.Id}}" hx-swap="delete">
         <label>
             {{if .Done}}
                 <input type="checkbox" checked hx-post="/api/todos/{{.Id}}" name="done"/>

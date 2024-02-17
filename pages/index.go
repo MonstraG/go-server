@@ -168,7 +168,6 @@ func ApiTodosDelHandler(w http.ResponseWriter, r *http.Request) {
 
 	writeTodos(todos)
 
-	w.Header().Set("HX-Trigger", "revalidateTodos")
 	w.WriteHeader(200)
 }
 
