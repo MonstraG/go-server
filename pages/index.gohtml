@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{.PageTitle}}</title>
+    <link rel="icon" type="image/x-icon" href="/public/favicon.png">
+    <script src="/public/htmx.min.js"></script>
+</head>
+<body>
+<main>
+    <h1>{{.PageTitle}}</h1>
+    <ul>
+        {{range .Todos}}
+            <li>
+                <label>
+                    {{if .Done}}
+                        <input type="checkbox" checked="checked" hx-post="/api/todos/{{.Id}}"/>
+                    {{else}}
+                        <input type="checkbox" hx-post="/api/todos/{{.Id}}"/>
+                    {{end}}
+                    <span>{{.Title}}</span>
+                </label>
+            </li>
+        {{end}}
+    </ul>
+    <form hx-put="/api/todos" hx-swap="none" hx-on::after-request="this.reset()">
+        <label>
+            New item
+            <input name="title" type="text" />
+        </label>
+        <button type="submit">
+            Add
+        </button>
+    </form>
+</main>
+</body>
+</html>
+

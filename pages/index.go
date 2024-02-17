@@ -55,7 +55,7 @@ func writeTodos(todos *[]Todo) {
 }
 
 func IndexHandler(w http.ResponseWriter, _ *http.Request) {
-	var indexTemplate = template.Must(template.ParseFiles("pages/index.html"))
+	var indexTemplate = template.Must(template.ParseFiles("pages/index.gohtml"))
 	var todos = readTodos()
 	var pageModel = TodoPageData{
 		PageTitle: "My TODO list",
@@ -65,7 +65,7 @@ func IndexHandler(w http.ResponseWriter, _ *http.Request) {
 	var _ = indexTemplate.Execute(w, pageModel)
 }
 
-func ApiTodoPost(w http.ResponseWriter, r *http.Request) {
+func ApiTodoPostHandler(w http.ResponseWriter, r *http.Request) {
 	idParam := r.PathValue("id")
 	if idParam == "" {
 		log.Println("Empty id passed")
@@ -86,6 +86,36 @@ func ApiTodoPost(w http.ResponseWriter, r *http.Request) {
 			break
 		}
 	}
+
+	writeTodos(todos)
+
+	w.WriteHeader(200)
+}
+
+func ApiTodoPutHandler(w http.ResponseWriter, r *http.Request) {
+	err := r.ParseForm()
+	if err != nil {
+		log.Println("Failed to parse form")
+		w.WriteHeader(400)
+		return
+	}
+
+	var title = r.Form.Get("title")
+	if title == "" {
+		w.WriteHeader(400)
+		return
+	}
+
+	var todos = readTodos()
+	var maxId = 1
+	for _, todo := range *todos {
+		if maxId < todo.Id {
+			maxId = todo.Id
+		}
+	}
+	maxId += 1
+
+	*todos = append(*todos, Todo{Id: maxId, Title: title})
 
 	writeTodos(todos)
 
