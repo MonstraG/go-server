@@ -16,9 +16,9 @@ func IndexHandler(w http.ResponseWriter, _ *http.Request) {
 	data := TodoPageData{
 		PageTitle: "My TODO list",
 		Todos: []models.Todo{
-			{Title: "Task 1", Done: false},
-			{Title: "Task 2", Done: true},
-			{Title: "Task 3", Done: true},
+			{Id: 1, Title: "Task 1", Done: false},
+			{Id: 2, Title: "Task 2", Done: true},
+			{Id: 3, Title: "Task 3", Done: true},
 		},
 	}
 
