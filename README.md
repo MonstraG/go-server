@@ -36,4 +36,5 @@ Right now it features:
 - Persistent database in its simplest form - a json file
 - CRUD
 - 404 page
-- htmx partials endpoint protection
+- redirect to 404 on unknown urls
+- htmx partials endpoint protection (redirect to 404 if not htmx request)

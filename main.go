@@ -18,6 +18,7 @@ func main() {
 	// pages
 	app.HandleFunc("GET /{$}", index.GetHandler)
 	app.HandleFunc("GET /404", notFound.GetHandler)
+	app.HandleFunc("GET /*", notFound.RedirectToNotFoundHandler)
 
 	// partials
 	app.HandleFunc("GET /todos", HtmxPartialMiddleware(todos.GetHandler))

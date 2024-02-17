@@ -18,3 +18,8 @@ func GetHandler(w http.ResponseWriter, _ *http.Request) {
 		log.Fatal("Failed to render 404 page", err)
 	}
 }
+
+func RedirectToNotFoundHandler(w http.ResponseWriter, _ *http.Request) {
+	w.Header().Set("Location", "/404")
+	w.WriteHeader(http.StatusTemporaryRedirect)
+}

@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"go-server/pages/notFound"
 	"log"
 	"net/http"
 	"time"
@@ -29,8 +30,7 @@ func HtmxPartialMiddleware(next HandlerFn) HandlerFn {
 	return func(w http.ResponseWriter, r *http.Request) {
 		isHtmxRequest := r.Header.Get("Hx-Request") == "true"
 		if !isHtmxRequest {
-			w.Header().Set("Location", "/404")
-			w.WriteHeader(http.StatusTemporaryRedirect)
+			notFound.RedirectToNotFoundHandler(w, r)
 			return
 		}
 
