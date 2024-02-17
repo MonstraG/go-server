@@ -7,10 +7,14 @@ import (
 	"time"
 )
 
-type Middleware func(func(w http.ResponseWriter, r *http.Request)) func(w http.ResponseWriter, r *http.Request)
+// HandlerFn is an alias for http.HandlerFunc argument
+type HandlerFn func(w http.ResponseWriter, r *http.Request)
 
-// LoggingMiddleware logs the request details
-func LoggingMiddleware(next func(w http.ResponseWriter, r *http.Request)) func(w http.ResponseWriter, r *http.Request) {
+// Middleware is just a HandlerFn that returns a HandlerFn
+type Middleware func(HandlerFn) HandlerFn
+
+// LoggingMiddleware is a Middleware that logs a hit and time taken to answer
+func LoggingMiddleware(next HandlerFn) HandlerFn {
 	return func(w http.ResponseWriter, r *http.Request) {
 		start := time.Now()
 		log.Printf("Started %s %s", r.Method, r.URL.Path)
@@ -19,13 +23,13 @@ func LoggingMiddleware(next func(w http.ResponseWriter, r *http.Request)) func(w
 	}
 }
 
-// App struct to hold our routes and middleware
+// App = http.ServeMux + Middleware slice
 type App struct {
 	mux         *http.ServeMux
 	middlewares []Middleware
 }
 
-// NewApp creates and returns a new App with an initialized ServeMux and middleware slice
+// NewApp is a constructor for App
 func NewApp() *App {
 	return &App{
 		mux:         http.NewServeMux(),
@@ -33,24 +37,25 @@ func NewApp() *App {
 	}
 }
 
-// Use adds middleware to the chain
+// Use adds Middleware to chain
 func (app *App) Use(mw Middleware) {
 	app.middlewares = append(app.middlewares, mw)
 }
 
-// HandleFunc registers a handler for a specific route, applying all middlewares
-func (app *App) HandleFunc(pattern string, handlerFunc func(w http.ResponseWriter, r *http.Request)) {
-	app.mux.HandleFunc(pattern, applyMiddleware(handlerFunc, app.middlewares))
+// HandleFunc is a wrapper around normal http.HandleFunc but calling all Middleware-s first
+func (app *App) HandleFunc(pattern string, handlerFunc HandlerFn) {
+	app.mux.HandleFunc(pattern, applyMiddlewares(handlerFunc, app.middlewares))
 }
 
-// ApplyMiddleware applies multiple middleware to a http.Handler
-func applyMiddleware(h func(w http.ResponseWriter, r *http.Request), middlewares []Middleware) func(w http.ResponseWriter, r *http.Request) {
+// applyMiddlewares runs all middlewares in order
+func applyMiddlewares(h HandlerFn, middlewares []Middleware) HandlerFn {
 	for _, middleware := range middlewares {
 		h = middleware(h)
 	}
 	return h
 }
 
+// ListenAndServe is a wrapper around normal http.ListenAndServe
 func (app *App) ListenAndServe(address string) error {
 	log.Println(fmt.Sprintf("Starting server on http://localhost%s", address))
 	return http.ListenAndServe(address, app.mux)

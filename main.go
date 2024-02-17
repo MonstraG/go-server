@@ -10,10 +10,8 @@ var address = ":8080"
 func main() {
 	app := NewApp()
 
-	// Add middleware
 	app.Use(LoggingMiddleware)
 
-	// Add routes
 	app.HandleFunc("GET /{$}", pages.IndexGetHandler)
 	app.HandleFunc("POST /api/todos/{id}", pages.ApiTodosPostHandler)
 	app.HandleFunc("GET /todos", pages.TodosGetHandler)
