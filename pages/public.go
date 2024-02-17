@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-func PublicFolderHandler(w http.ResponseWriter, r *http.Request) {
+func PublicHandler(w http.ResponseWriter, r *http.Request) {
 	var pathValue = r.PathValue("path")
 	path := fmt.Sprintf("public/%s", pathValue)
 

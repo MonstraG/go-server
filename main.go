@@ -2,6 +2,8 @@ package main
 
 import (
 	"go-server/pages"
+	"go-server/pages/index"
+	"go-server/pages/todos"
 	"log"
 )
 
@@ -13,16 +15,16 @@ func main() {
 	app.Use(LoggingMiddleware)
 
 	// pages or partials
-	app.HandleFunc("GET /{$}", pages.IndexGetHandler)
-	app.HandleFunc("GET /todos", pages.TodosGetHandler)
+	app.HandleFunc("GET /{$}", index.GetHandler)
+	app.HandleFunc("GET /todos", todos.GetHandler)
 
 	// api
-	app.HandleFunc("POST /api/todos/{id}", pages.ApiTodosPostHandler)
-	app.HandleFunc("PUT /api/todos", pages.ApiTodosPutHandler)
-	app.HandleFunc("DELETE /api/todos/{id}", pages.ApiTodosDelHandler)
+	app.HandleFunc("POST /api/todos/{id}", todos.ApiPostHandler)
+	app.HandleFunc("PUT /api/todos", todos.ApiPutHandler)
+	app.HandleFunc("DELETE /api/todos/{id}", todos.ApiDelHandler)
 
 	// resources
-	app.HandleFunc("GET /public/{path...}", pages.PublicFolderHandler)
+	app.HandleFunc("GET /public/{path...}", pages.PublicHandler)
 
 	log.Fatal(app.ListenAndServe(address))
 }

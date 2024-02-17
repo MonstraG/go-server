@@ -2,13 +2,13 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>{{.PageTitle}}</title>
+    <title>My TODO list</title>
     <link rel="icon" type="image/x-icon" href="/public/favicon.png">
     <script src="/public/htmx.min.js"></script>
 </head>
 <body>
 <main>
-    <h1>{{.PageTitle}}</h1>
+    <h1>My TODO list</h1>
     <ul hx-trigger="load, revalidateTodos from:body" hx-get="/todos">
     </ul>
     <form hx-put="/api/todos" hx-swap="none" hx-on::after-request="this.reset()">
