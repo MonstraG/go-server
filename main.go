@@ -16,7 +16,7 @@ func main() {
 
 	// pages or partials
 	app.HandleFunc("GET /{$}", index.GetHandler)
-	app.HandleFunc("GET /todos", todos.GetHandler)
+	app.HandleFunc("GET /todos", HtmxPartialMiddleware(todos.GetHandler))
 
 	// api
 	app.HandleFunc("GET /api/todos", todos.ApiGetHandler)
