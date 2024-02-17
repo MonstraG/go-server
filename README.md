@@ -7,14 +7,19 @@ to set up a fairly complex server with different routes and methods and stuff wi
 package main
 
 import (
+	"fmt"
+	"html"
 	"net/http"
 )
 
+func HandleEndpoint(w http.ResponseWriter, r *http.Request) {
+	_, _ = fmt.Fprintf(w, "Hello, %q", html.EscapeString(r.URL.Path))
+}
 func main() {
-	http.HandleFunc("GET /{$}", IndexGetHandler)
-	http.HandleFunc("POST /api/todos/{id}", ApiTodosPostHandler)
-	http.HandleFunc("GET /todos", TodosGetHandler)
-	http.HandleFunc("PUT /api/todos", ApiTodosPutHandler)
+	http.HandleFunc("GET /{$}", HandleEndpoint)
+	http.HandleFunc("POST /api/todos/{id}", HandleEndpoint)
+	http.HandleFunc("GET /todos", HandleEndpoint)
+	http.HandleFunc("PUT /api/todos", HandleEndpoint)
 
 	_ = http.ListenAndServe("8080", nil)
 }
