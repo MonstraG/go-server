@@ -135,3 +135,43 @@ func ApiTodosPutHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("HX-Trigger", "revalidateTodos")
 	w.WriteHeader(200)
 }
+
+func ApiTodosDelHandler(w http.ResponseWriter, r *http.Request) {
+	idParam := r.PathValue("id")
+	if idParam == "" {
+		log.Println("Empty id passed")
+		w.WriteHeader(400)
+		return
+	}
+	id, err := strconv.Atoi(idParam)
+	if err != nil {
+		log.Printf("Unable to convert %s to int\n", idParam)
+		w.WriteHeader(400)
+		return
+	}
+
+	var todos = readTodos()
+	index := 0
+	for i, todo := range *todos {
+		if todo.Id == id {
+			index = i
+			break
+		}
+	}
+	if index == 0 {
+		log.Printf("Todo with id %d is not found", id)
+		w.WriteHeader(400)
+		return
+	}
+
+	*todos = removeAt(*todos, index)
+
+	writeTodos(todos)
+
+	w.Header().Set("HX-Trigger", "revalidateTodos")
+	w.WriteHeader(200)
+}
+
+func removeAt[T interface{}](slice []T, index int) []T {
+	return append(slice[:index], slice[index+1:]...)
+}

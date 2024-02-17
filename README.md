@@ -29,4 +29,4 @@ Right now it features:
 - Routing
 - Middleware
 - Persistent database in its simplest form - a json file
-- CRU(d)
+- CRUD

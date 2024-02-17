@@ -12,10 +12,16 @@ func main() {
 
 	app.Use(LoggingMiddleware)
 
+	// pages or partials
 	app.HandleFunc("GET /{$}", pages.IndexGetHandler)
-	app.HandleFunc("POST /api/todos/{id}", pages.ApiTodosPostHandler)
 	app.HandleFunc("GET /todos", pages.TodosGetHandler)
+
+	// api
+	app.HandleFunc("POST /api/todos/{id}", pages.ApiTodosPostHandler)
 	app.HandleFunc("PUT /api/todos", pages.ApiTodosPutHandler)
+	app.HandleFunc("DELETE /api/todos/{id}", pages.ApiTodosDelHandler)
+
+	// resources
 	app.HandleFunc("GET /public/{path...}", pages.PublicFolderHandler)
 
 	log.Fatal(app.ListenAndServe(address))
