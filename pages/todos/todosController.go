@@ -1,6 +1,7 @@
 package todos
 
 import (
+	"go-server/query"
 	"html/template"
 	"log"
 	"net/http"
@@ -8,10 +9,14 @@ import (
 
 var todosTemplate = template.Must(template.ParseFiles("pages/todos/todos.gohtml"))
 
+type ListDTO struct {
+	Todos []Todo
+}
+
 func GetHandler(w http.ResponseWriter, _ *http.Request) {
 	todos := readTodos()
 
-	var pageModel = DTO{
+	var pageModel = ListDTO{
 		Todos: *todos,
 	}
 
@@ -22,29 +27,24 @@ func GetHandler(w http.ResponseWriter, _ *http.Request) {
 }
 
 func ApiPostHandler(w http.ResponseWriter, r *http.Request) {
-	id := parseIdPathValueSendErr(w, r)
+	id := query.ParseIdPathValueRespondErr(w, r)
 	if id == 0 {
 		return
 	}
-	err := parseFormSendErr(w, r)
+	err := query.ParseFormRespondErr(w, r)
 	if err != nil {
 		return
 	}
 
 	var done = r.Form.Get("done") == "on"
 
-	var todos = readTodos()
-
-	_, todo := findTodoById(todos, id)
-	todo.Done = done
-
-	writeTodos(todos)
+	runTodosAction(changeDoneAction(w, id, done))
 
 	w.WriteHeader(200)
 }
 
 func ApiPutHandler(w http.ResponseWriter, r *http.Request) {
-	err := parseFormSendErr(w, r)
+	err := query.ParseFormRespondErr(w, r)
 	if err != nil {
 		return
 	}
@@ -55,26 +55,19 @@ func ApiPutHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var todos = readTodos()
-
-	*todos = append(*todos, Todo{
-		Id:    generateNextId(todos),
-		Title: title,
-	})
-
-	writeTodos(todos)
+	runTodosAction(addTodoAction(title))
 
 	w.Header().Set("HX-Trigger", "revalidateTodos")
 	w.WriteHeader(200)
 }
 
 func ApiDelHandler(w http.ResponseWriter, r *http.Request) {
-	id := parseIdPathValueSendErr(w, r)
+	id := query.ParseIdPathValueRespondErr(w, r)
 	if id == 0 {
 		return
 	}
 
-	updateTodos(deleteTodoAtIdAction(w, id))
+	runTodosAction(deleteTodoAtIdAction(w, id))
 
 	w.WriteHeader(200)
 }
