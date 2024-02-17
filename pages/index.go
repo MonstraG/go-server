@@ -15,9 +15,12 @@ type Todo struct {
 	Done  bool   `json:"done"`
 }
 
-type TodoPageData struct {
+type IndexPageModel struct {
 	PageTitle string
-	Todos     []Todo
+}
+
+type TodosDTO struct {
+	Todos []Todo
 }
 
 func readTodos() *[]Todo {
@@ -54,18 +57,28 @@ func writeTodos(todos *[]Todo) {
 	}
 }
 
-func IndexHandler(w http.ResponseWriter, _ *http.Request) {
+func IndexGetHandler(w http.ResponseWriter, _ *http.Request) {
 	var indexTemplate = template.Must(template.ParseFiles("pages/index.gohtml"))
-	var todos = readTodos()
-	var pageModel = TodoPageData{
+	var pageModel = IndexPageModel{
 		PageTitle: "My TODO list",
-		Todos:     *todos,
 	}
 
 	var _ = indexTemplate.Execute(w, pageModel)
 }
 
-func ApiTodoPostHandler(w http.ResponseWriter, r *http.Request) {
+func TodosGetHandler(w http.ResponseWriter, _ *http.Request) {
+	var indexTemplate = template.Must(template.ParseFiles("pages/todos.gohtml"))
+
+	var todos = readTodos()
+
+	var pageModel = TodosDTO{
+		Todos: *todos,
+	}
+
+	var _ = indexTemplate.Execute(w, pageModel)
+}
+
+func ApiTodosPostHandler(w http.ResponseWriter, r *http.Request) {
 	idParam := r.PathValue("id")
 	if idParam == "" {
 		log.Println("Empty id passed")
@@ -92,7 +105,7 @@ func ApiTodoPostHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(200)
 }
 
-func ApiTodoPutHandler(w http.ResponseWriter, r *http.Request) {
+func ApiTodosPutHandler(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
 		log.Println("Failed to parse form")
@@ -119,5 +132,6 @@ func ApiTodoPutHandler(w http.ResponseWriter, r *http.Request) {
 
 	writeTodos(todos)
 
+	w.Header().Set("HX-Trigger", "revalidateTodos")
 	w.WriteHeader(200)
 }

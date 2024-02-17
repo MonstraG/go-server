@@ -14,9 +14,10 @@ func main() {
 	app.Use(LoggingMiddleware)
 
 	// Add routes
-	app.HandleFunc("GET /{$}", pages.IndexHandler)
-	app.HandleFunc("POST /api/todos/{id}", pages.ApiTodoPostHandler)
-	app.HandleFunc("PUT /api/todos", pages.ApiTodoPutHandler)
+	app.HandleFunc("GET /{$}", pages.IndexGetHandler)
+	app.HandleFunc("POST /api/todos/{id}", pages.ApiTodosPostHandler)
+	app.HandleFunc("GET /todos", pages.TodosGetHandler)
+	app.HandleFunc("PUT /api/todos", pages.ApiTodosPutHandler)
 	app.HandleFunc("GET /public/{path...}", pages.PublicFolderHandler)
 
 	log.Fatal(app.ListenAndServe(address))

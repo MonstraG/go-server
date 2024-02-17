@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -9,19 +9,7 @@
 <body>
 <main>
     <h1>{{.PageTitle}}</h1>
-    <ul>
-        {{range .Todos}}
-            <li>
-                <label>
-                    {{if .Done}}
-                        <input type="checkbox" checked="checked" hx-post="/api/todos/{{.Id}}"/>
-                    {{else}}
-                        <input type="checkbox" hx-post="/api/todos/{{.Id}}"/>
-                    {{end}}
-                    <span>{{.Title}}</span>
-                </label>
-            </li>
-        {{end}}
+    <ul hx-trigger="load, revalidateTodos from:body" hx-get="/todos">
     </ul>
     <form hx-put="/api/todos" hx-swap="none" hx-on::after-request="this.reset()">
         <label>
