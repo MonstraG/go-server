@@ -53,7 +53,7 @@ func ApiPostHandler(w http.ResponseWriter, r *http.Request) {
 
 	runTodosAction(changeDoneAction(w, id, done))
 
-	w.WriteHeader(200)
+	w.WriteHeader(http.StatusOK)
 }
 
 func ApiPutHandler(w http.ResponseWriter, r *http.Request) {
@@ -64,14 +64,14 @@ func ApiPutHandler(w http.ResponseWriter, r *http.Request) {
 
 	var title = r.Form.Get("title")
 	if title == "" {
-		w.WriteHeader(400)
+		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
 	runTodosAction(addTodoAction(title))
 
 	w.Header().Set("HX-Trigger", "revalidateTodos")
-	w.WriteHeader(200)
+	w.WriteHeader(http.StatusOK)
 }
 
 func ApiDelHandler(w http.ResponseWriter, r *http.Request) {
@@ -82,5 +82,5 @@ func ApiDelHandler(w http.ResponseWriter, r *http.Request) {
 
 	runTodosAction(deleteTodoAtIdAction(w, id))
 
-	w.WriteHeader(200)
+	w.WriteHeader(http.StatusOK)
 }

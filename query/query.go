@@ -11,7 +11,7 @@ func ParseFormRespondErr(w http.ResponseWriter, r *http.Request) error {
 	err := r.ParseForm()
 	if err != nil {
 		log.Println("Failed to parse form")
-		w.WriteHeader(400)
+		w.WriteHeader(http.StatusBadRequest)
 	}
 	return err
 }
@@ -22,13 +22,13 @@ func ParseIdPathValueRespondErr(w http.ResponseWriter, r *http.Request) int {
 	idParam := r.PathValue("id")
 	if idParam == "" {
 		log.Println("Empty id passed")
-		w.WriteHeader(400)
+		w.WriteHeader(http.StatusBadRequest)
 		return 0
 	}
 	id, err := strconv.Atoi(idParam)
 	if err != nil {
 		log.Printf("Unable to convert %s to int\n", idParam)
-		w.WriteHeader(400)
+		w.WriteHeader(http.StatusBadRequest)
 		return 0
 	}
 	return id

@@ -11,7 +11,7 @@ func deleteTodoAtIdAction(w http.ResponseWriter, id int) SetStateAction {
 		index, todo := findTodoById(todos, id)
 		if todo == nil {
 			log.Printf("Todo with id %d is not found", id)
-			w.WriteHeader(400)
+			w.WriteHeader(http.StatusBadRequest)
 			return false
 		}
 		*todos = removeAt(*todos, index)
@@ -36,7 +36,7 @@ func changeDoneAction(w http.ResponseWriter, id int, done bool) SetStateAction {
 		_, todo := findTodoById(todos, id)
 		if todo == nil {
 			log.Printf("Todo with id %d is not found", id)
-			w.WriteHeader(400)
+			w.WriteHeader(http.StatusBadRequest)
 			return false
 		}
 		todo.Done = done
