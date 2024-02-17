@@ -1,7 +1,7 @@
 package main
 
 import (
-	"example-go-server/pages"
+	"go-server/pages"
 	"log"
 )
 
