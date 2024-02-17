@@ -23,6 +23,7 @@ type TodosDTO struct {
 	Todos []Todo
 }
 
+// readTodos reads todos from data.json file
 func readTodos() *[]Todo {
 	var todos []Todo
 
@@ -30,11 +31,7 @@ func readTodos() *[]Todo {
 	if err != nil {
 		log.Println("Database file not found, creating")
 
-		initialTodos := []Todo{
-			{Id: 1, Title: "Task 1", Done: false},
-			{Id: 2, Title: "Task 2", Done: true},
-			{Id: 3, Title: "Task 3", Done: true},
-		}
+		initialTodos := make([]Todo, 0)
 		writeTodos(&initialTodos)
 		return &initialTodos
 	}
@@ -46,6 +43,7 @@ func readTodos() *[]Todo {
 	return &todos
 }
 
+// writeTodos writes todos to data.json file
 func writeTodos(todos *[]Todo) {
 	bytes, err := json.Marshal(todos)
 	if err != nil {
@@ -79,46 +77,28 @@ func TodosGetHandler(w http.ResponseWriter, _ *http.Request) {
 }
 
 func ApiTodosPostHandler(w http.ResponseWriter, r *http.Request) {
-	idParam := r.PathValue("id")
-	if idParam == "" {
-		log.Println("Empty id passed")
-		w.WriteHeader(400)
+	id := parseIdPathValueSendErr(w, r)
+	if id == 0 {
 		return
 	}
-	id, err := strconv.Atoi(idParam)
+	err := parseFormSendErr(w, r)
 	if err != nil {
-		log.Printf("Unable to convert %s to int\n", idParam)
-		w.WriteHeader(400)
 		return
 	}
 
-	err = r.ParseForm()
-	if err != nil {
-		log.Println("Failed to parse form")
-		w.WriteHeader(400)
-		return
-	}
 	var done = r.Form.Get("done") == "on"
 
 	var todos = readTodos()
-
-	for i := range *todos {
-		if (*todos)[i].Id == id {
-			(*todos)[i].Done = done
-			break
-		}
-	}
-
+	_, todo := findTodoById(todos, id)
+	todo.Done = done
 	writeTodos(todos)
 
 	w.WriteHeader(200)
 }
 
 func ApiTodosPutHandler(w http.ResponseWriter, r *http.Request) {
-	err := r.ParseForm()
+	err := parseFormSendErr(w, r)
 	if err != nil {
-		log.Println("Failed to parse form")
-		w.WriteHeader(400)
 		return
 	}
 
@@ -145,29 +125,42 @@ func ApiTodosPutHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(200)
 }
 
-func ApiTodosDelHandler(w http.ResponseWriter, r *http.Request) {
+// parseIdPathValueSendErr tries to get 'id' from r.PathValue(), logging errors and writing 400 to http.ResponseWriter
+func parseIdPathValueSendErr(w http.ResponseWriter, r *http.Request) int {
 	idParam := r.PathValue("id")
 	if idParam == "" {
 		log.Println("Empty id passed")
 		w.WriteHeader(400)
-		return
+		return 0
 	}
 	id, err := strconv.Atoi(idParam)
 	if err != nil {
 		log.Printf("Unable to convert %s to int\n", idParam)
 		w.WriteHeader(400)
+		return 0
+	}
+	return id
+}
+
+// parseFormSendErr runs http.Request ParseForm, logging errors and writing 400 to http.ResponseWriter
+func parseFormSendErr(w http.ResponseWriter, r *http.Request) error {
+	err := r.ParseForm()
+	if err != nil {
+		log.Println("Failed to parse form")
+		w.WriteHeader(400)
+	}
+	return err
+}
+
+func ApiTodosDelHandler(w http.ResponseWriter, r *http.Request) {
+	id := parseIdPathValueSendErr(w, r)
+	if id == 0 {
 		return
 	}
 
 	var todos = readTodos()
-	index := 0
-	for i, todo := range *todos {
-		if todo.Id == id {
-			index = i
-			break
-		}
-	}
-	if index == 0 {
+	index, todo := findTodoById(todos, id)
+	if todo == nil {
 		log.Printf("Todo with id %d is not found", id)
 		w.WriteHeader(400)
 		return
@@ -181,6 +174,17 @@ func ApiTodosDelHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(200)
 }
 
+// removeAt removes element from slice at index, keeping order
 func removeAt[T interface{}](slice []T, index int) []T {
 	return append(slice[:index], slice[index+1:]...)
+}
+
+// findTodoById returns index and element in slice together with a pointer to an element, allowing modifications
+func findTodoById(todos *[]Todo, id int) (int, *Todo) {
+	for i := range *todos {
+		if (*todos)[i].Id == id {
+			return i, &(*todos)[i]
+		}
+	}
+	return 0, nil
 }
