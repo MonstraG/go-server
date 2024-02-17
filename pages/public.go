@@ -22,6 +22,6 @@ func PublicHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	_, err = w.Write(content)
 	if err != nil {
-		log.Println("Failed to write to output???", err)
+		log.Println("Failed to write file to response", err)
 	}
 }

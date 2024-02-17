@@ -2,19 +2,23 @@ package todos
 
 import (
 	"html/template"
+	"log"
 	"net/http"
 )
 
-func GetHandler(w http.ResponseWriter, _ *http.Request) {
-	var indexTemplate = template.Must(template.ParseFiles("pages/todos/todos.gohtml"))
+var todosTemplate = template.Must(template.ParseFiles("pages/todos/todos.gohtml"))
 
-	var todos = readTodos()
+func GetHandler(w http.ResponseWriter, _ *http.Request) {
+	todos := readTodos()
 
 	var pageModel = DTO{
 		Todos: *todos,
 	}
 
-	var _ = indexTemplate.Execute(w, pageModel)
+	err := todosTemplate.Execute(w, pageModel)
+	if err != nil {
+		log.Fatal("Failed to render todos template", err)
+	}
 }
 
 func ApiPostHandler(w http.ResponseWriter, r *http.Request) {
