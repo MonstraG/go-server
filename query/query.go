@@ -6,7 +6,7 @@ import (
 	"strconv"
 )
 
-// ParseFormRespondErr runs http.Request ParseForm, logging errors and writing 400 to http.ResponseWriter
+// ParseFormRespondErr runs http.Request ParseForm, logs errors and writes http.StatusBadRequest to http.ResponseWriter
 func ParseFormRespondErr(w http.ResponseWriter, r *http.Request) error {
 	err := r.ParseForm()
 	if err != nil {
