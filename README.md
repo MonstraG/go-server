@@ -35,3 +35,5 @@ Right now it features:
 - Middleware
 - Persistent database in its simplest form - a json file
 - CRUD
+- 404 page
+- htmx partials endpoint protection

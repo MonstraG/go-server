@@ -1,15 +1,19 @@
 package notFound
 
 import (
+	"go-server/pages"
 	"html/template"
 	"log"
 	"net/http"
 )
 
-var indexTemplate = template.Must(template.ParseFiles("pages/notFound/notFound.gohtml"))
+var notFoundTemplate = template.Must(template.ParseFiles("pages/base.gohtml", "pages/notFound/notFound.gohtml"))
+var notFoundPageData = pages.PageData{
+	PageTitle: "404: page not found",
+}
 
 func GetHandler(w http.ResponseWriter, _ *http.Request) {
-	err := indexTemplate.Execute(w, nil)
+	err := notFoundTemplate.Execute(w, notFoundPageData)
 	if err != nil {
 		log.Fatal("Failed to render 404 page", err)
 	}
