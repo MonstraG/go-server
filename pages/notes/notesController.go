@@ -19,7 +19,7 @@ func NewController(service Service) Controller {
 	}
 }
 
-var notesTemplate = template.Must(template.ParseFiles("pages/base.gohtml", "pages/notes/notes.gohtml"))
+var notesTemplate = template.Must(template.ParseFiles("pages/base.gohtml", "pages/notes/tmpl/notes.gohtml"))
 var notesPageData = pages.PageData{
 	PageTitle: "My note list",
 }
@@ -35,7 +35,7 @@ func (controller Controller) GetHandler(w http.ResponseWriter, _ *http.Request) 
 	}
 }
 
-var notesListTemplate = template.Must(template.ParseFiles("pages/notes/notesList.gohtml"))
+var notesListTemplate = template.Must(template.ParseFiles("pages/notes/tmpl/notesList.gohtml"))
 
 func (controller Controller) GetListHandler(w http.ResponseWriter, _ *http.Request) {
 	notes := controller.service.readNotes()
@@ -50,7 +50,7 @@ func (controller Controller) GetListHandler(w http.ResponseWriter, _ *http.Reque
 	}
 }
 
-var noteTemplate = template.Must(template.ParseFiles("pages/base.gohtml", "pages/notes/note.gohtml"))
+var noteTemplate = template.Must(template.ParseFiles("pages/base.gohtml", "pages/notes/tmpl/note.gohtml"))
 
 type notePageDTO struct {
 	pages.PageData

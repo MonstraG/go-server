@@ -19,7 +19,7 @@ func NewController(service Service) Controller {
 	}
 }
 
-var todosTemplate = template.Must(template.ParseFiles("pages/base.gohtml", "pages/todos/todos.gohtml"))
+var todosTemplate = template.Must(template.ParseFiles("pages/base.gohtml", "pages/todos/tmpl/todos.gohtml"))
 var todosPageData = pages.PageData{
 	PageTitle: "My todo list",
 }
@@ -31,7 +31,7 @@ func (controller Controller) GetHandler(w http.ResponseWriter, _ *http.Request) 
 	}
 }
 
-var todosListTemplate = template.Must(template.ParseFiles("pages/todos/todosList.gohtml"))
+var todosListTemplate = template.Must(template.ParseFiles("pages/todos/tmpl/todosList.gohtml"))
 
 type ListDTO struct {
 	Todos []Todo
