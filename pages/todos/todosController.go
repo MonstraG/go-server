@@ -10,7 +10,13 @@ import (
 )
 
 type Controller struct {
-	Service Service
+	service Service
+}
+
+func NewController(service Service) Controller {
+	return Controller{
+		service: service,
+	}
 }
 
 var todosTemplate = template.Must(template.ParseFiles("pages/base.gohtml", "pages/todos/todos.gohtml"))
@@ -32,7 +38,7 @@ type ListDTO struct {
 }
 
 func (controller Controller) GetListHandler(w http.ResponseWriter, _ *http.Request) {
-	todos := controller.Service.Repository.readTodos()
+	todos := controller.service.readTodos()
 
 	pageModel := ListDTO{
 		Todos: *todos,
@@ -45,7 +51,7 @@ func (controller Controller) GetListHandler(w http.ResponseWriter, _ *http.Reque
 }
 
 func (controller Controller) ApiGetHandler(w http.ResponseWriter, _ *http.Request) {
-	todos := controller.Service.Repository.readTodos()
+	todos := controller.service.readTodos()
 	bytes, err := json.Marshal(todos)
 	if err != nil {
 		log.Print("Failed to marshal todos", err)
@@ -68,7 +74,7 @@ func (controller Controller) ApiPutHandler(w http.ResponseWriter, r *http.Reques
 
 	done := r.Form.Get("done") == "on"
 
-	err = controller.Service.setTodoDoneState(id, done)
+	err = controller.service.setTodoDoneState(id, done)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		log.Print(err)
@@ -90,7 +96,7 @@ func (controller Controller) ApiPostHandler(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	controller.Service.addTodo(title)
+	controller.service.addTodo(title)
 
 	w.Header().Set("HX-Trigger", "revalidateTodos")
 	w.WriteHeader(http.StatusOK)
@@ -102,7 +108,7 @@ func (controller Controller) ApiDelHandler(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	err := controller.Service.deleteTodoById(id)
+	err := controller.service.deleteTodoById(id)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		log.Print(err)

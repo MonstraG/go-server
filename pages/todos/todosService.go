@@ -6,11 +6,21 @@ import (
 )
 
 type Service struct {
-	Repository Repository
+	repository Repository
+}
+
+func NewService(repository Repository) Service {
+	return Service{
+		repository: repository,
+	}
+}
+
+func (service Service) readTodos() *[]Todo {
+	return service.repository.readTodos()
 }
 
 func (service Service) deleteTodoById(id int) error {
-	todos := service.Repository.readTodos()
+	todos := service.repository.readTodos()
 
 	index, todo := helpers.FindByID(todos, id)
 	if todo == nil {
@@ -18,24 +28,24 @@ func (service Service) deleteTodoById(id int) error {
 	}
 
 	*todos = helpers.RemoveAt(*todos, index)
-	service.Repository.writeTodos(todos)
+	service.repository.writeTodos(todos)
 
 	return nil
 }
 
 func (service Service) addTodo(title string) {
-	todos := service.Repository.readTodos()
+	todos := service.repository.readTodos()
 
 	*todos = append(*todos, Todo{
 		Id:    helpers.GenerateNextId(todos),
 		Title: title,
 	})
 
-	service.Repository.writeTodos(todos)
+	service.repository.writeTodos(todos)
 }
 
 func (service Service) setTodoDoneState(id int, done bool) error {
-	todos := service.Repository.readTodos()
+	todos := service.repository.readTodos()
 
 	_, todo := helpers.FindByID(todos, id)
 	if todo == nil {
@@ -43,6 +53,6 @@ func (service Service) setTodoDoneState(id int, done bool) error {
 	}
 
 	todo.Done = done
-	service.Repository.writeTodos(todos)
+	service.repository.writeTodos(todos)
 	return nil
 }

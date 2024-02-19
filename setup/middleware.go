@@ -1,4 +1,4 @@
-package main
+package setup
 
 import (
 	"go-server/pages/notFound"

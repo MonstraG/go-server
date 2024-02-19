@@ -6,17 +6,18 @@ import (
 	"go-server/pages/notFound"
 	"go-server/pages/notes"
 	"go-server/pages/todos"
+	"go-server/setup"
 	"log"
 )
 
 func main() {
-	config := ReadConfig()
+	config := setup.ReadConfig()
 
-	app := NewApp(config)
+	app := setup.NewApp(config)
 
-	app.Use(LoggingMiddleware)
+	app.Use(setup.LoggingMiddleware)
 
-	todosController := todos.Controller{Service: todos.Service{Repository: todos.Repository{DatabaseFolder: config.DatabaseFolder}}}
+	todosController := todos.NewController(todos.NewService(todos.NewRepository(config)))
 
 	// pages
 	app.HandleFunc("GET /{$}", index.GetHandler)
@@ -27,8 +28,8 @@ func main() {
 	app.HandleFunc("GET /notes/{id}", notes.GetNoteHandler)
 
 	// partials
-	app.HandleFunc("GET /todosList", HtmxPartialMiddleware(todosController.GetListHandler))
-	app.HandleFunc("GET /notesList", HtmxPartialMiddleware(notes.GetListHandler))
+	app.HandleFunc("GET /todosList", setup.HtmxPartialMiddleware(todosController.GetListHandler))
+	app.HandleFunc("GET /notesList", setup.HtmxPartialMiddleware(notes.GetListHandler))
 
 	// api
 	app.HandleFunc("GET /api/todos", todosController.ApiGetHandler)

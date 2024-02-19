@@ -1,4 +1,4 @@
-package main
+package setup
 
 import (
 	"fmt"
@@ -10,15 +10,15 @@ import (
 type App struct {
 	mux         *http.ServeMux
 	middlewares []Middleware
-	config      Config
+	config      AppConfig
 }
 
 // NewApp is a constructor for App
-func NewApp(config Config) *App {
+func NewApp(appConfig AppConfig) *App {
 	return &App{
 		mux:         http.NewServeMux(),
 		middlewares: []Middleware{},
-		config:      config,
+		config:      appConfig,
 	}
 }
 
