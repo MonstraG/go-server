@@ -1,55 +1,43 @@
 package todos
 
 import (
-	"log"
-	"net/http"
+	"fmt"
 )
 
-// deleteTodoAtIdAction runs a SetStateAction to delete a todo by id
-func deleteTodoAtIdAction(w http.ResponseWriter, id int) SetStateAction {
-	return func(todos *[]Todo) bool {
-		index, todo := findTodoById(todos, id)
-		if todo == nil {
-			log.Printf("Todo with id %d is not found", id)
-			w.WriteHeader(http.StatusBadRequest)
-			return false
-		}
-		*todos = removeAt(*todos, index)
-		return true
+func deleteTodoById(id int) error {
+	todos := readTodos()
+
+	index, todo := findTodoById(todos, id)
+	if todo == nil {
+		return fmt.Errorf("todo with id %d is not found", id)
 	}
+
+	*todos = removeAt(*todos, index)
+	writeTodos(todos)
+
+	return nil
 }
 
-// addTodoAction runs a SetStateAction to add a todo
-func addTodoAction(title string) SetStateAction {
-	return func(todos *[]Todo) bool {
-		*todos = append(*todos, Todo{
-			Id:    generateNextId(todos),
-			Title: title,
-		})
-		return true
-	}
+func addTodo(title string) {
+	todos := readTodos()
+
+	*todos = append(*todos, Todo{
+		Id:    generateNextId(todos),
+		Title: title,
+	})
+
+	writeTodos(todos)
 }
 
-// changeDoneAction runs a SetStateAction to change Todo.Done status by id
-func changeDoneAction(w http.ResponseWriter, id int, done bool) SetStateAction {
-	return func(todos *[]Todo) bool {
-		_, todo := findTodoById(todos, id)
-		if todo == nil {
-			log.Printf("Todo with id %d is not found", id)
-			w.WriteHeader(http.StatusBadRequest)
-			return false
-		}
-		todo.Done = done
-		return true
-	}
-}
+func setTodoDoneState(id int, done bool) error {
+	todos := readTodos()
 
-// runTodosAction reads from db, applies change and commits to db if successful
-func runTodosAction(change SetStateAction) {
-	var todos = readTodos()
-
-	ok := change(todos)
-	if ok {
-		writeTodos(todos)
+	_, todo := findTodoById(todos, id)
+	if todo == nil {
+		return fmt.Errorf("todo with id %d is not found", id)
 	}
+
+	todo.Done = done
+	writeTodos(todos)
+	return nil
 }

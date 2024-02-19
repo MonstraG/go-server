@@ -17,7 +17,7 @@ type ListDTO struct {
 func GetHandler(w http.ResponseWriter, _ *http.Request) {
 	todos := readTodos()
 
-	var pageModel = ListDTO{
+	pageModel := ListDTO{
 		Todos: *todos,
 	}
 
@@ -49,9 +49,14 @@ func ApiPostHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var done = r.Form.Get("done") == "on"
+	done := r.Form.Get("done") == "on"
 
-	runTodosAction(changeDoneAction(w, id, done))
+	err = setTodoDoneState(id, done)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		log.Print(err)
+		return
+	}
 
 	w.WriteHeader(http.StatusOK)
 }
@@ -62,13 +67,13 @@ func ApiPutHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var title = r.Form.Get("title")
+	title := r.Form.Get("title")
 	if title == "" {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
-	runTodosAction(addTodoAction(title))
+	addTodo(title)
 
 	w.Header().Set("HX-Trigger", "revalidateTodos")
 	w.WriteHeader(http.StatusOK)
@@ -80,7 +85,12 @@ func ApiDelHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	runTodosAction(deleteTodoAtIdAction(w, id))
+	err := deleteTodoById(id)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		log.Print(err)
+		return
+	}
 
 	w.WriteHeader(http.StatusOK)
 }

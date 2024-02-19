@@ -8,7 +8,7 @@ import (
 	"log"
 )
 
-var address = ":8080"
+const address = ":8080"
 
 func main() {
 	app := NewApp()

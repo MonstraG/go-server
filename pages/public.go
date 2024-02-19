@@ -9,8 +9,8 @@ import (
 )
 
 func PublicHandler(w http.ResponseWriter, r *http.Request) {
-	var pathValue = r.PathValue("path")
-	path := fmt.Sprintf("public/%s", pathValue)
+	pathQueryParam := r.PathValue("path")
+	path := fmt.Sprintf("public/%s", pathQueryParam)
 
 	content, err := os.ReadFile(path)
 	if err != nil {

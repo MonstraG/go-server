@@ -43,7 +43,6 @@ func generateNextId(todos *[]Todo) int {
 
 // readTodos reads todos from data.json file
 func readTodos() *[]Todo {
-	var todos []Todo
 
 	data, err := os.ReadFile("data/data.json")
 	if err != nil {
@@ -53,6 +52,7 @@ func readTodos() *[]Todo {
 		return &initialTodos
 	}
 
+	var todos []Todo
 	err = json.Unmarshal(data, &todos)
 	if err != nil {
 		log.Fatal("Failed to read from database file", err)
