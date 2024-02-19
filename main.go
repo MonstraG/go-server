@@ -39,6 +39,9 @@ func main() {
 	app.HandleFunc("GET /notesList", setup.HtmxPartialMiddleware(notesController.GetListHandler))
 	app.HandleFunc("GET /notes/{id}/edit", setup.HtmxPartialMiddleware(notesController.GetNoteEditHandler))
 
+	// It feels like htmx wants me to get rid of /api/ endpoints, or, more precisely,
+	// remove `/api` from the url and return partials in them, but I'm not decided on that at the moment
+
 	// api
 	app.HandleFunc("PUT /api/todos/{id}", todosController.ApiPutHandler)
 	app.HandleFunc("POST /api/todos", todosController.ApiPostHandler)
