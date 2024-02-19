@@ -7,16 +7,6 @@ import (
 	"os"
 )
 
-type Todo struct {
-	Id    int    `json:"id"`
-	Title string `json:"title"`
-	Done  bool   `json:"done"`
-}
-
-func (t Todo) ID() int {
-	return t.Id
-}
-
 const dbFilePath = "todos.json"
 
 type Repository struct {
