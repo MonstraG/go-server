@@ -40,3 +40,4 @@ Right now it features:
 - htmx partials endpoint protection (redirect to 404 if not htmx request)
 - config.json
 - Two entities with common ID trait
+- """Dependency Injection""" (without the Injection part)
