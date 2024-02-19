@@ -12,9 +12,6 @@ type Todo struct {
 	Done  bool   `json:"done"`
 }
 
-// SetStateAction is an alias for function that changes todos and reports failures
-type SetStateAction func(*[]Todo) bool
-
 // removeAt removes element from slice at index, keeping order
 func removeAt[T interface{}](slice []T, index int) []T {
 	return append(slice[:index], slice[index+1:]...)
