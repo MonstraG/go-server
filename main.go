@@ -8,10 +8,10 @@ import (
 	"log"
 )
 
-const address = ":8080"
-
 func main() {
-	app := NewApp()
+	config := ReadConfig()
+
+	app := NewApp(config)
 
 	app.Use(LoggingMiddleware)
 
@@ -32,5 +32,5 @@ func main() {
 	// resources
 	app.HandleFunc("GET /public/{path...}", pages.PublicHandler)
 
-	log.Fatal(app.ListenAndServe(address))
+	log.Fatal(app.ListenAndServe())
 }

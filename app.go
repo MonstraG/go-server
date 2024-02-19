@@ -10,13 +10,15 @@ import (
 type App struct {
 	mux         *http.ServeMux
 	middlewares []Middleware
+	config      Config
 }
 
 // NewApp is a constructor for App
-func NewApp() *App {
+func NewApp(config Config) *App {
 	return &App{
 		mux:         http.NewServeMux(),
 		middlewares: []Middleware{},
+		config:      config,
 	}
 }
 
@@ -39,7 +41,7 @@ func applyMiddlewares(h HandlerFn, middlewares []Middleware) HandlerFn {
 }
 
 // ListenAndServe is a wrapper around normal http.ListenAndServe
-func (app *App) ListenAndServe(address string) error {
-	log.Println(fmt.Sprintf("Starting server on http://localhost%s", address))
-	return http.ListenAndServe(address, app.mux)
+func (app *App) ListenAndServe() error {
+	log.Println(fmt.Sprintf("Starting server on %s", app.config.Host))
+	return http.ListenAndServe(app.config.Host, app.mux)
 }
