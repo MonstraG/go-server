@@ -2,17 +2,18 @@ package todos
 
 import (
 	"fmt"
+	"go-server/helpers"
 )
 
 func deleteTodoById(id int) error {
 	todos := readTodos()
 
-	index, todo := findTodoById(todos, id)
+	index, todo := helpers.FindTodoByID(todos, id)
 	if todo == nil {
 		return fmt.Errorf("todo with id %d is not found", id)
 	}
 
-	*todos = removeAt(*todos, index)
+	*todos = helpers.RemoveAt(*todos, index)
 	writeTodos(todos)
 
 	return nil
@@ -22,7 +23,7 @@ func addTodo(title string) {
 	todos := readTodos()
 
 	*todos = append(*todos, Todo{
-		Id:    generateNextId(todos),
+		Id:    helpers.GenerateNextId(todos),
 		Title: title,
 	})
 
@@ -32,7 +33,7 @@ func addTodo(title string) {
 func setTodoDoneState(id int, done bool) error {
 	todos := readTodos()
 
-	_, todo := findTodoById(todos, id)
+	_, todo := helpers.FindTodoByID(todos, id)
 	if todo == nil {
 		return fmt.Errorf("todo with id %d is not found", id)
 	}

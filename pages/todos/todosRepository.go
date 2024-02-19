@@ -12,35 +12,11 @@ type Todo struct {
 	Done  bool   `json:"done"`
 }
 
-// removeAt removes element from slice at index, keeping order
-func removeAt[T interface{}](slice []T, index int) []T {
-	return append(slice[:index], slice[index+1:]...)
+func (t Todo) ID() int {
+	return t.Id
 }
 
-// findTodoById returns index and element in slice together with a pointer to an element, allowing modifications
-func findTodoById(todos *[]Todo, id int) (int, *Todo) {
-	for i := range *todos {
-		if (*todos)[i].Id == id {
-			return i, &(*todos)[i]
-		}
-	}
-	return 0, nil
-}
-
-// generateNextId finds next unoccupied id
-func generateNextId(todos *[]Todo) int {
-	maxId := 0
-	for _, todo := range *todos {
-		if maxId < todo.Id {
-			maxId = todo.Id
-		}
-	}
-	return maxId + 1
-}
-
-// readTodos reads todos from data.json file
 func readTodos() *[]Todo {
-
 	data, err := os.ReadFile("data/data.json")
 	if err != nil {
 		log.Println("Database file not found, creating")
@@ -52,12 +28,11 @@ func readTodos() *[]Todo {
 	var todos []Todo
 	err = json.Unmarshal(data, &todos)
 	if err != nil {
-		log.Fatal("Failed to read from database file", err)
+		log.Fatal("Failed to read from database file ", err)
 	}
 	return &todos
 }
 
-// writeTodos writes todos to data.json file
 func writeTodos(todos *[]Todo) {
 	bytes, err := json.Marshal(todos)
 	if err != nil {

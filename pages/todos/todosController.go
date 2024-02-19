@@ -2,7 +2,7 @@ package todos
 
 import (
 	"encoding/json"
-	"go-server/query"
+	"go-server/helpers"
 	"html/template"
 	"log"
 	"net/http"
@@ -40,11 +40,11 @@ func ApiGetHandler(w http.ResponseWriter, _ *http.Request) {
 }
 
 func ApiPostHandler(w http.ResponseWriter, r *http.Request) {
-	id := query.ParseIdPathValueRespondErr(w, r)
+	id := helpers.ParseIdPathValueRespondErr(w, r)
 	if id == 0 {
 		return
 	}
-	err := query.ParseFormRespondErr(w, r)
+	err := helpers.ParseFormRespondErr(w, r)
 	if err != nil {
 		return
 	}
@@ -62,7 +62,7 @@ func ApiPostHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func ApiPutHandler(w http.ResponseWriter, r *http.Request) {
-	err := query.ParseFormRespondErr(w, r)
+	err := helpers.ParseFormRespondErr(w, r)
 	if err != nil {
 		return
 	}
@@ -80,7 +80,7 @@ func ApiPutHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func ApiDelHandler(w http.ResponseWriter, r *http.Request) {
-	id := query.ParseIdPathValueRespondErr(w, r)
+	id := helpers.ParseIdPathValueRespondErr(w, r)
 	if id == 0 {
 		return
 	}
