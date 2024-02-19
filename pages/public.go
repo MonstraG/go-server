@@ -20,6 +20,9 @@ func PublicHandler(w http.ResponseWriter, r *http.Request) {
 	if strings.HasSuffix(path, ".js") {
 		w.Header().Set("Content-Type", "text/javascript; charset=utf-8")
 	}
+	if strings.HasSuffix(path, ".css") {
+		w.Header().Set("Content-Type", "text/css; charset=utf-8")
+	}
 	_, err = w.Write(content)
 	if err != nil {
 		log.Println("Failed to write file to response", err)
