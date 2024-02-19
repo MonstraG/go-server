@@ -5,5 +5,7 @@
     <br/>
     <time>Updated: {{.Note.Updated}}</time>
     <br/>
-    <a href="/notes">Back to list of notes</a>
+    <a href="/notes">Back to the list of notes</a>
+    <br/>
+    <button hx-delete="/api/notes/{{.Note.Id}}" >delete note</button>
 {{end}}

@@ -149,5 +149,6 @@ func (controller Controller) ApiDelHandler(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
+	w.Header().Set("HX-Redirect", "/notes")
 	w.WriteHeader(http.StatusOK)
 }
