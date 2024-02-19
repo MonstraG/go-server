@@ -79,6 +79,7 @@ func ApiGetHandler(w http.ResponseWriter, _ *http.Request) {
 	}
 }
 
+// todo: actually like add update form and use this endpoint
 func ApiPutHandler(w http.ResponseWriter, r *http.Request) {
 	id := helpers.ParseIdPathValueRespondErr(w, r)
 	if id == 0 {

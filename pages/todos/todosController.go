@@ -9,16 +9,16 @@ import (
 	"net/http"
 )
 
+type Controller struct {
+	Service Service
+}
+
 var todosTemplate = template.Must(template.ParseFiles("pages/base.gohtml", "pages/todos/todos.gohtml"))
 var todosPageData = pages.PageData{
 	PageTitle: "My todo list",
 }
 
-type ListDTO struct {
-	Todos []Todo
-}
-
-func GetHandler(w http.ResponseWriter, _ *http.Request) {
+func (controller Controller) GetHandler(w http.ResponseWriter, _ *http.Request) {
 	err := todosTemplate.Execute(w, todosPageData)
 	if err != nil {
 		log.Fatal("Failed to render todos template", err)
@@ -27,8 +27,12 @@ func GetHandler(w http.ResponseWriter, _ *http.Request) {
 
 var todosListTemplate = template.Must(template.ParseFiles("pages/todos/todosList.gohtml"))
 
-func GetListHandler(w http.ResponseWriter, _ *http.Request) {
-	todos := readTodos()
+type ListDTO struct {
+	Todos []Todo
+}
+
+func (controller Controller) GetListHandler(w http.ResponseWriter, _ *http.Request) {
+	todos := controller.Service.Repository.readTodos()
 
 	pageModel := ListDTO{
 		Todos: *todos,
@@ -40,8 +44,8 @@ func GetListHandler(w http.ResponseWriter, _ *http.Request) {
 	}
 }
 
-func ApiGetHandler(w http.ResponseWriter, _ *http.Request) {
-	todos := readTodos()
+func (controller Controller) ApiGetHandler(w http.ResponseWriter, _ *http.Request) {
+	todos := controller.Service.Repository.readTodos()
 	bytes, err := json.Marshal(todos)
 	if err != nil {
 		log.Print("Failed to marshal todos", err)
@@ -52,7 +56,7 @@ func ApiGetHandler(w http.ResponseWriter, _ *http.Request) {
 	}
 }
 
-func ApiPutHandler(w http.ResponseWriter, r *http.Request) {
+func (controller Controller) ApiPutHandler(w http.ResponseWriter, r *http.Request) {
 	id := helpers.ParseIdPathValueRespondErr(w, r)
 	if id == 0 {
 		return
@@ -64,7 +68,7 @@ func ApiPutHandler(w http.ResponseWriter, r *http.Request) {
 
 	done := r.Form.Get("done") == "on"
 
-	err = setTodoDoneState(id, done)
+	err = controller.Service.setTodoDoneState(id, done)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		log.Print(err)
@@ -74,7 +78,7 @@ func ApiPutHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
-func ApiPostHandler(w http.ResponseWriter, r *http.Request) {
+func (controller Controller) ApiPostHandler(w http.ResponseWriter, r *http.Request) {
 	err := helpers.ParseFormRespondErr(w, r)
 	if err != nil {
 		return
@@ -86,19 +90,19 @@ func ApiPostHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	addTodo(title)
+	controller.Service.addTodo(title)
 
 	w.Header().Set("HX-Trigger", "revalidateTodos")
 	w.WriteHeader(http.StatusOK)
 }
 
-func ApiDelHandler(w http.ResponseWriter, r *http.Request) {
+func (controller Controller) ApiDelHandler(w http.ResponseWriter, r *http.Request) {
 	id := helpers.ParseIdPathValueRespondErr(w, r)
 	if id == 0 {
 		return
 	}
 
-	err := deleteTodoById(id)
+	err := controller.Service.deleteTodoById(id)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		log.Print(err)

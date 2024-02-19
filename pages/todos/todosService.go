@@ -5,8 +5,12 @@ import (
 	"go-server/helpers"
 )
 
-func deleteTodoById(id int) error {
-	todos := readTodos()
+type Service struct {
+	Repository Repository
+}
+
+func (service Service) deleteTodoById(id int) error {
+	todos := service.Repository.readTodos()
 
 	index, todo := helpers.FindByID(todos, id)
 	if todo == nil {
@@ -14,24 +18,24 @@ func deleteTodoById(id int) error {
 	}
 
 	*todos = helpers.RemoveAt(*todos, index)
-	writeTodos(todos)
+	service.Repository.writeTodos(todos)
 
 	return nil
 }
 
-func addTodo(title string) {
-	todos := readTodos()
+func (service Service) addTodo(title string) {
+	todos := service.Repository.readTodos()
 
 	*todos = append(*todos, Todo{
 		Id:    helpers.GenerateNextId(todos),
 		Title: title,
 	})
 
-	writeTodos(todos)
+	service.Repository.writeTodos(todos)
 }
 
-func setTodoDoneState(id int, done bool) error {
-	todos := readTodos()
+func (service Service) setTodoDoneState(id int, done bool) error {
+	todos := service.Repository.readTodos()
 
 	_, todo := helpers.FindByID(todos, id)
 	if todo == nil {
@@ -39,6 +43,6 @@ func setTodoDoneState(id int, done bool) error {
 	}
 
 	todo.Done = done
-	writeTodos(todos)
+	service.Repository.writeTodos(todos)
 	return nil
 }

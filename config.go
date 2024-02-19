@@ -9,7 +9,8 @@ import (
 const configPath = "config.json"
 
 type Config struct {
-	Host string `json:"host"`
+	Host           string `json:"host"`
+	DatabaseFolder string `json:"databaseFolder"`
 }
 
 func ReadConfig() Config {

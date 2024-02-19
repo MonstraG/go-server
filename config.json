@@ -1,3 +1,4 @@
 {
-  "host": "localhost:8080"
+  "host": "localhost:8080",
+  "databaseFolder": "data/"
 }
