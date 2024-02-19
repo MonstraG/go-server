@@ -2,7 +2,7 @@
     <h1>{{.PageTitle}}</h1>
     <ul hx-trigger="load, revalidateTodos from:body" hx-get="/todos">
     </ul>
-    <form hx-put="/api/todos" hx-swap="none" hx-on::after-request="this.reset()">
+    <form hx-post="/api/todos" hx-swap="none" hx-on::after-request="this.reset()">
         <label>
             New item
             <input name="title" type="text"/>

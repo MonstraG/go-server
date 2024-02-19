@@ -8,7 +8,7 @@ import (
 	"net/http"
 )
 
-var todosTemplate = template.Must(template.ParseFiles("pages/todos/todos.gohtml"))
+var todosTemplate = template.Must(template.ParseFiles("pages/todos/todosList.gohtml"))
 
 type ListDTO struct {
 	Todos []Todo
@@ -39,7 +39,7 @@ func ApiGetHandler(w http.ResponseWriter, _ *http.Request) {
 	}
 }
 
-func ApiPostHandler(w http.ResponseWriter, r *http.Request) {
+func ApiPutHandler(w http.ResponseWriter, r *http.Request) {
 	id := helpers.ParseIdPathValueRespondErr(w, r)
 	if id == 0 {
 		return
@@ -61,7 +61,7 @@ func ApiPostHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
-func ApiPutHandler(w http.ResponseWriter, r *http.Request) {
+func ApiPostHandler(w http.ResponseWriter, r *http.Request) {
 	err := helpers.ParseFormRespondErr(w, r)
 	if err != nil {
 		return

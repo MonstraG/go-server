@@ -25,8 +25,8 @@ func main() {
 
 	// api
 	app.HandleFunc("GET /api/todos", todos.ApiGetHandler)
-	app.HandleFunc("POST /api/todos/{id}", todos.ApiPostHandler)
-	app.HandleFunc("PUT /api/todos", todos.ApiPutHandler)
+	app.HandleFunc("PUT /api/todos/{id}", todos.ApiPutHandler)
+	app.HandleFunc("POST /api/todos", todos.ApiPostHandler)
 	app.HandleFunc("DELETE /api/todos/{id}", todos.ApiDelHandler)
 
 	// resources

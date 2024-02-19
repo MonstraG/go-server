@@ -6,6 +6,8 @@ import (
 	"os"
 )
 
+const dbFile = "data/todos.json"
+
 type Todo struct {
 	Id    int    `json:"id"`
 	Title string `json:"title"`
@@ -17,7 +19,7 @@ func (t Todo) ID() int {
 }
 
 func readTodos() *[]Todo {
-	data, err := os.ReadFile("data/data.json")
+	data, err := os.ReadFile(dbFile)
 	if err != nil {
 		log.Println("Database file not found, creating")
 		initialTodos := make([]Todo, 0)
@@ -38,7 +40,7 @@ func writeTodos(todos *[]Todo) {
 	if err != nil {
 		log.Fatal("Failed to marshall todos", err)
 	}
-	err = os.WriteFile("data/data.json", bytes, 0666)
+	err = os.WriteFile(dbFile, bytes, 0666)
 	if err != nil {
 		log.Fatal("Failed to write database file", err)
 	}

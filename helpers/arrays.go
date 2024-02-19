@@ -9,8 +9,8 @@ func RemoveAt[T interface{}](slice []T, index int) []T {
 	return append(slice[:index], slice[index+1:]...)
 }
 
-// FindTodoByID returns index and element in slice together with a pointer to an element, allowing modifications
-func FindTodoByID[T Identifiable](items *[]T, id int) (int, *T) {
+// FindByID returns index and element in slice together with a pointer to an element, allowing modifications
+func FindByID[T Identifiable](items *[]T, id int) (int, *T) {
 	for i := range *items {
 		if (*items)[i].ID() == id {
 			return i, &(*items)[i]

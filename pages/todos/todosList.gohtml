@@ -2,9 +2,9 @@
     <li hx-delete="/api/todos/{{.Id}}" hx-trigger="click from:#delete-{{.Id}}" hx-swap="delete">
         <label>
             {{if .Done}}
-                <input type="checkbox" checked hx-post="/api/todos/{{.Id}}" name="done" hx-swap="none"/>
+                <input type="checkbox" checked hx-put="/api/todos/{{.Id}}" name="done" hx-swap="none"/>
             {{else}}
-                <input type="checkbox" hx-post="/api/todos/{{.Id}}" name="done" hx-swap="none"/>
+                <input type="checkbox" hx-put="/api/todos/{{.Id}}" name="done" hx-swap="none"/>
             {{end}}
             <span>{{.Title}}</span>
         </label>

@@ -8,7 +8,7 @@ import (
 func deleteTodoById(id int) error {
 	todos := readTodos()
 
-	index, todo := helpers.FindTodoByID(todos, id)
+	index, todo := helpers.FindByID(todos, id)
 	if todo == nil {
 		return fmt.Errorf("todo with id %d is not found", id)
 	}
@@ -33,7 +33,7 @@ func addTodo(title string) {
 func setTodoDoneState(id int, done bool) error {
 	todos := readTodos()
 
-	_, todo := helpers.FindTodoByID(todos, id)
+	_, todo := helpers.FindByID(todos, id)
 	if todo == nil {
 		return fmt.Errorf("todo with id %d is not found", id)
 	}
