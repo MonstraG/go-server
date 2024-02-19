@@ -1,0 +1,24 @@
+{{define "content"}}
+    <h1>{{.PageTitle}}</h1>
+    <ul hx-trigger="load, revalidateNotes from:body" hx-get="/notesList">
+    </ul>
+    <form hx-post="/api/notes" hx-swap="none" hx-on::after-request="this.reset()">
+        <h2>
+            New note
+        </h2>
+
+        <label for="title">Title</label>
+        <div>
+            <input name="title" type="text" id="title"/>
+        </div>
+
+        <label for="description">Description</label>
+        <div>
+            <textarea name="description" id="description"></textarea>
+        </div>
+
+        <button type="submit">
+            Add
+        </button>
+    </form>
+{{end}}

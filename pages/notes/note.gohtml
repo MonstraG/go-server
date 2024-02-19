@@ -1,0 +1,9 @@
+{{define "content"}}
+    <h1>{{.Note.Title}}</h1>
+    <p>{{.Note.Description}}</p>
+    <time>Created: {{.Note.Created}}</time>
+    <br/>
+    <time>Updated: {{.Note.Updated}}</time>
+    <br/>
+    <a href="/notes">Back to list of notes</a>
+{{end}}
