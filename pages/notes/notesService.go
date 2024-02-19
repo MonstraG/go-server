@@ -34,7 +34,7 @@ func (service Service) deleteNoteById(id int) error {
 	return nil
 }
 
-// todo: use update dto?
+// todo: use update dto (a.k.a. parsing formData into struct?)
 func (service Service) updateNote(id int, title string, description string) error {
 	notes := service.repository.readNotes()
 	_, note := helpers.FindByID(notes, id)
