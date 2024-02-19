@@ -38,3 +38,4 @@ Right now it features:
 - 404 page
 - redirect to 404 on unknown urls
 - htmx partials endpoint protection (redirect to 404 if not htmx request)
+- config.json
