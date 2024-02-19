@@ -9,7 +9,7 @@ import (
 
 var indexTemplate = template.Must(template.ParseFiles("pages/base.gohtml", "pages/index/index.gohtml"))
 var indexPageData = pages.PageData{
-	PageTitle: "My todo list",
+	PageTitle: "Homepage",
 }
 
 func GetHandler(w http.ResponseWriter, _ *http.Request) {

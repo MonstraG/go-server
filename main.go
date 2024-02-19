@@ -19,9 +19,10 @@ func main() {
 	app.HandleFunc("GET /{$}", index.GetHandler)
 	app.HandleFunc("GET /404", notFound.GetHandler)
 	app.HandleFunc("GET /*", notFound.RedirectToNotFoundHandler)
+	app.HandleFunc("GET /todos", todos.GetHandler)
 
 	// partials
-	app.HandleFunc("GET /todos", HtmxPartialMiddleware(todos.GetHandler))
+	app.HandleFunc("GET /todosList", HtmxPartialMiddleware(todos.GetListHandler))
 
 	// api
 	app.HandleFunc("GET /api/todos", todos.ApiGetHandler)

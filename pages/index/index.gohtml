@@ -1,14 +1,4 @@
 {{define "content"}}
     <h1>{{.PageTitle}}</h1>
-    <ul hx-trigger="load, revalidateTodos from:body" hx-get="/todos">
-    </ul>
-    <form hx-post="/api/todos" hx-swap="none" hx-on::after-request="this.reset()">
-        <label>
-            New item
-            <input name="title" type="text"/>
-        </label>
-        <button type="submit">
-            Add
-        </button>
-    </form>
+    <p>This is a home page and doesn't have any <code>htmx</code> content.</p>
 {{end}}

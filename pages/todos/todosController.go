@@ -3,25 +3,38 @@ package todos
 import (
 	"encoding/json"
 	"go-server/helpers"
+	"go-server/pages"
 	"html/template"
 	"log"
 	"net/http"
 )
 
-var todosTemplate = template.Must(template.ParseFiles("pages/todos/todosList.gohtml"))
+var todosTemplate = template.Must(template.ParseFiles("pages/base.gohtml", "pages/todos/todos.gohtml"))
+var todosPageData = pages.PageData{
+	PageTitle: "My todo list",
+}
 
 type ListDTO struct {
 	Todos []Todo
 }
 
 func GetHandler(w http.ResponseWriter, _ *http.Request) {
+	err := todosTemplate.Execute(w, todosPageData)
+	if err != nil {
+		log.Fatal("Failed to render todos template", err)
+	}
+}
+
+var todosListTemplate = template.Must(template.ParseFiles("pages/todos/todosList.gohtml"))
+
+func GetListHandler(w http.ResponseWriter, _ *http.Request) {
 	todos := readTodos()
 
 	pageModel := ListDTO{
 		Todos: *todos,
 	}
 
-	err := todosTemplate.Execute(w, pageModel)
+	err := todosListTemplate.Execute(w, pageModel)
 	if err != nil {
 		log.Fatal("Failed to render todos template", err)
 	}
