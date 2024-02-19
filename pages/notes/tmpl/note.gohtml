@@ -1,11 +1,16 @@
 {{define "content"}}
-    <h1>{{.Note.Title}}</h1>
-    <p style="white-space: pre">{{.Note.Description}}</p>
-    <time>Created: {{.Note.Created}}</time>
-    <br/>
-    <time>Updated: {{.Note.Updated}}</time>
-    <br/>
-    <a href="/notes">Back to the list of notes</a>
-    <br/>
-    <button hx-delete="/api/notes/{{.Note.Id}}" >delete note</button>
+    <div hx-target="this" hx-swap="outerHTML">
+        <h1>{{.Note.Title}}</h1>
+        <p style="white-space: pre">{{.Note.Description}}</p>
+        <p>
+            <time>Created: {{.Note.Created}}</time>
+            <br/>
+            <time>Updated: {{.Note.Updated}}</time>
+        </p>
+        <a href="/notes">Back to the list of notes</a>
+        <button hx-get="/notes/{{.Note.Id}}/edit">
+            Edit note
+        </button>
+        <button hx-delete="/api/notes/{{.Note.Id}}" hx-target="none" hx-swap="none">Delete note</button>
+    </div>
 {{end}}

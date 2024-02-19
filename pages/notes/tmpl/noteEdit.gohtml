@@ -1,0 +1,21 @@
+<h1>Edit note</h1>
+<form hx-put="/api/notes/{{.Id}}" hx-swap="none">
+    <label for="title">Title</label>
+    <div>
+        <input name="title" type="text" id="title" value="{{.Title}}"/>
+    </div>
+
+    <label for="description">Description</label>
+    <div>
+        <textarea name="description" id="description">{{.Description}}</textarea>
+    </div>
+
+    <a href="/notes/{{.Id}}">
+        Cancel
+    </a>
+    <button type="submit">Submit</button>
+</form>
+
+
+
+

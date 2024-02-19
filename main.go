@@ -37,14 +37,13 @@ func main() {
 	// partials
 	app.HandleFunc("GET /todosList", setup.HtmxPartialMiddleware(todosController.GetListHandler))
 	app.HandleFunc("GET /notesList", setup.HtmxPartialMiddleware(notesController.GetListHandler))
+	app.HandleFunc("GET /notes/{id}/edit", setup.HtmxPartialMiddleware(notesController.GetNoteEditHandler))
 
 	// api
-	app.HandleFunc("GET /api/todos", todosController.ApiGetHandler)
 	app.HandleFunc("PUT /api/todos/{id}", todosController.ApiPutHandler)
 	app.HandleFunc("POST /api/todos", todosController.ApiPostHandler)
 	app.HandleFunc("DELETE /api/todos/{id}", todosController.ApiDelHandler)
 
-	app.HandleFunc("GET /api/notes", notesController.ApiGetHandler)
 	app.HandleFunc("PUT /api/notes/{id}", notesController.ApiPutHandler)
 	app.HandleFunc("POST /api/notes", notesController.ApiPostHandler)
 	app.HandleFunc("DELETE /api/notes/{id}", notesController.ApiDelHandler)

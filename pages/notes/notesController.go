@@ -1,7 +1,6 @@
 package notes
 
 import (
-	"encoding/json"
 	"go-server/helpers"
 	"go-server/pages"
 	"html/template"
@@ -77,19 +76,23 @@ func (controller Controller) GetNoteHandler(w http.ResponseWriter, r *http.Reque
 	}
 }
 
-func (controller Controller) ApiGetHandler(w http.ResponseWriter, _ *http.Request) {
-	notes := controller.service.readNotes()
-	bytes, err := json.Marshal(notes)
-	if err != nil {
-		log.Print("Failed to marshal notes", err)
+var noteEditTemplate = template.Must(template.ParseFiles("pages/notes/tmpl/noteEdit.gohtml"))
+
+func (controller Controller) GetNoteEditHandler(w http.ResponseWriter, r *http.Request) {
+	id := helpers.ParseIdPathValueRespondErr(w, r)
+	if id == 0 {
+		return
 	}
-	_, err = w.Write(bytes)
+
+	notes := controller.service.readNotes()
+	_, note := helpers.FindByID(notes, id)
+
+	err := noteEditTemplate.Execute(w, note)
 	if err != nil {
-		log.Print("Failed to write notes", err)
+		log.Fatal("Failed to render notes template", err)
 	}
 }
 
-// todo: actually like add update form and use this endpoint
 func (controller Controller) ApiPutHandler(w http.ResponseWriter, r *http.Request) {
 	id := helpers.ParseIdPathValueRespondErr(w, r)
 	if id == 0 {
@@ -114,6 +117,7 @@ func (controller Controller) ApiPutHandler(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
+	w.Header().Set("HX-Redirect", "/notes")
 	w.WriteHeader(http.StatusOK)
 }
 
