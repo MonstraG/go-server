@@ -15,6 +15,9 @@ func main() {
 
 	app := setup.NewApp(config)
 
+	var authMiddleware = setup.CreateBasicAuthMiddleware(config)
+	app.Use(authMiddleware)
+
 	app.Use(setup.LoggingMiddleware)
 
 	// todo: can we make this automatic?

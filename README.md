@@ -31,9 +31,9 @@ So this is a project of me "trying it".
 It has no other dependencies or libs, other than `htmx` for less javascript (which seems to be all the rage these days).
 Right now it features:
 
-- Routing
-- Middleware
-- Persistent database in its simplest form - a json file
+- routing
+- middleware
+- persistent database in its simplest form - a json file
 - CRUD
 - 404 page
 - redirect to 404 on unknown urls
@@ -41,3 +41,4 @@ Right now it features:
 - config.json
 - Two entities with common ID trait
 - """Dependency Injection""" (without the Injection part)
+- basic auth

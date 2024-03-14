@@ -11,6 +11,12 @@ const configPath = "config.json"
 type AppConfig struct {
 	Host           string `json:"host"`
 	DatabaseFolder string `json:"databaseFolder"`
+	Auth           Auth   `json:"auth"`
+}
+
+type Auth struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
 }
 
 func ReadConfig() AppConfig {

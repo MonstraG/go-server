@@ -36,3 +36,19 @@ func HtmxPartialMiddleware(next HandlerFn) HandlerFn {
 		next(w, r)
 	}
 }
+
+// CreateBasicAuthMiddleware returns middleware that requires basic auth
+func CreateBasicAuthMiddleware(config AppConfig) Middleware {
+	return func(next HandlerFn) HandlerFn {
+		return func(w http.ResponseWriter, r *http.Request) {
+			username, password, ok := r.BasicAuth()
+			if !ok || config.Auth.Username != username || config.Auth.Password != password {
+				w.Header().Set("WWW-Authenticate", `Basic realm="server", charset="UTF-8"`)
+				w.WriteHeader(401)
+				return
+			}
+
+			next(w, r)
+		}
+	}
+}
