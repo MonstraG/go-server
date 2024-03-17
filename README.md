@@ -39,6 +39,6 @@ Right now it features:
 - redirect to 404 on unknown urls
 - htmx partials endpoint protection (redirect to 404 if not htmx request)
 - config.json
-- Two entities with common ID trait
-- """Dependency Injection""" (without the Injection part)
+- two entities with common ID trait
+- manual Dependency Injection
 - basic auth
