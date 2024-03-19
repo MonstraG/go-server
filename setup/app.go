@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 )
 
 // App = http.ServeMux + Middleware slice
@@ -15,6 +16,11 @@ type App struct {
 
 // NewApp is a constructor for App
 func NewApp(appConfig AppConfig) *App {
+	err := os.MkdirAll(appConfig.DatabaseFolder, os.ModePerm)
+	if err != nil {
+		log.Fatal("Failed to create database folder")
+	}
+
 	return &App{
 		mux:         http.NewServeMux(),
 		middlewares: []Middleware{},
