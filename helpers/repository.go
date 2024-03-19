@@ -8,7 +8,7 @@ import (
 func ReadData(path string) []byte {
 	data, err := os.ReadFile(path)
 	if err != nil {
-		log.Fatal("Failed to write database file", err)
+		log.Fatal("Failed to read database file", err)
 	}
 
 	return data
