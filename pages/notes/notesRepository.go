@@ -2,9 +2,9 @@ package notes
 
 import (
 	"encoding/json"
+	"go-server/helpers"
 	"go-server/setup"
 	"log"
-	"os"
 )
 
 const dbFilePath = "notes.json"
@@ -20,16 +20,10 @@ func NewRepository(config setup.AppConfig) Repository {
 }
 
 func (repository Repository) readNotes() *[]Note {
-	data, err := os.ReadFile(repository.dbFilePath)
-	if err != nil {
-		log.Println("Database file not found, creating")
-		initialNotes := make([]Note, 0)
-		repository.writeNotes(&initialNotes)
-		return &initialNotes
-	}
+	data := helpers.ReadData(repository.dbFilePath)
 
 	var notes []Note
-	err = json.Unmarshal(data, &notes)
+	err := json.Unmarshal(data, &notes)
 	if err != nil {
 		log.Fatal("Failed to read from database file", err)
 	}
@@ -41,8 +35,6 @@ func (repository Repository) writeNotes(notes *[]Note) {
 	if err != nil {
 		log.Fatal("Failed to marshall notes", err)
 	}
-	err = os.WriteFile(repository.dbFilePath, bytes, 0666)
-	if err != nil {
-		log.Fatal("Failed to write database file", err)
-	}
+
+	helpers.WriteData(repository.dbFilePath, bytes)
 }

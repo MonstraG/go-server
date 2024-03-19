@@ -2,9 +2,9 @@ package todos
 
 import (
 	"encoding/json"
+	"go-server/helpers"
 	"go-server/setup"
 	"log"
-	"os"
 )
 
 const dbFilePath = "todos.json"
@@ -20,16 +20,10 @@ func NewRepository(config setup.AppConfig) Repository {
 }
 
 func (repository Repository) readTodos() *[]Todo {
-	data, err := os.ReadFile(repository.dbFilePath)
-	if err != nil {
-		log.Println("Database file not found, creating")
-		initialTodos := make([]Todo, 0)
-		repository.writeTodos(&initialTodos)
-		return &initialTodos
-	}
+	data := helpers.ReadData(repository.dbFilePath)
 
 	var todos []Todo
-	err = json.Unmarshal(data, &todos)
+	err := json.Unmarshal(data, &todos)
 	if err != nil {
 		log.Fatal("Failed to read from database file ", err)
 	}
@@ -41,8 +35,6 @@ func (repository Repository) writeTodos(todos *[]Todo) {
 	if err != nil {
 		log.Fatal("Failed to marshall todos", err)
 	}
-	err = os.WriteFile(repository.dbFilePath, bytes, 0666)
-	if err != nil {
-		log.Fatal("Failed to write database file", err)
-	}
+
+	helpers.WriteData(repository.dbFilePath, bytes)
 }
