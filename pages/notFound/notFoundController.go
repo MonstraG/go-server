@@ -15,7 +15,7 @@ var notFoundPageData = pages.PageData{
 func GetHandler(w http.ResponseWriter, _ *http.Request) {
 	err := notFoundTemplate.Execute(w, notFoundPageData)
 	if err != nil {
-		log.Fatal("Failed to render 404 page", err)
+		log.Fatal("Failed to render 404 page:\n", err)
 	}
 }
 

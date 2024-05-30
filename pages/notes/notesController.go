@@ -30,7 +30,7 @@ type ListDTO struct {
 func (controller Controller) GetHandler(w http.ResponseWriter, _ *http.Request) {
 	err := notesTemplate.Execute(w, notesPageData)
 	if err != nil {
-		log.Fatal("Failed to render notes template", err)
+		log.Fatal("Failed to render notes template:\n", err)
 	}
 }
 
@@ -45,7 +45,7 @@ func (controller Controller) GetListHandler(w http.ResponseWriter, _ *http.Reque
 
 	err := notesListTemplate.Execute(w, pageModel)
 	if err != nil {
-		log.Fatal("Failed to render notes template", err)
+		log.Fatal("Failed to render notes template:\n", err)
 	}
 }
 
@@ -72,7 +72,7 @@ func (controller Controller) GetNoteHandler(w http.ResponseWriter, r *http.Reque
 
 	err := noteTemplate.Execute(w, data)
 	if err != nil {
-		log.Fatal("Failed to render notes template", err)
+		log.Fatal("Failed to render notes template:\n", err)
 	}
 }
 
@@ -89,7 +89,7 @@ func (controller Controller) GetNoteEditHandler(w http.ResponseWriter, r *http.R
 
 	err := noteEditTemplate.Execute(w, note)
 	if err != nil {
-		log.Fatal("Failed to render notes template", err)
+		log.Fatal("Failed to render notes template:\n", err)
 	}
 }
 

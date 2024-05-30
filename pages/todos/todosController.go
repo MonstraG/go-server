@@ -27,7 +27,7 @@ var todosPageData = pages.PageData{
 func (controller Controller) GetHandler(w http.ResponseWriter, _ *http.Request) {
 	err := todosTemplate.Execute(w, todosPageData)
 	if err != nil {
-		log.Fatal("Failed to render todos template", err)
+		log.Fatal("Failed to render todos template:\n", err)
 	}
 }
 
@@ -46,7 +46,7 @@ func (controller Controller) GetListHandler(w http.ResponseWriter, _ *http.Reque
 
 	err := todosListTemplate.Execute(w, pageModel)
 	if err != nil {
-		log.Fatal("Failed to render todos template", err)
+		log.Fatal("Failed to render todos template:\n", err)
 	}
 }
 

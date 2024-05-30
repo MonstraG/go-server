@@ -25,7 +25,7 @@ func (repository Repository) readTodos() *[]Todo {
 	var todos []Todo
 	err := json.Unmarshal(data, &todos)
 	if err != nil {
-		log.Fatal("Failed to read from database file ", err)
+		log.Fatal("Failed to read from database file:\n", err)
 	}
 	return &todos
 }
@@ -33,7 +33,7 @@ func (repository Repository) readTodos() *[]Todo {
 func (repository Repository) writeTodos(todos *[]Todo) {
 	bytes, err := json.Marshal(todos)
 	if err != nil {
-		log.Fatal("Failed to marshall todos", err)
+		log.Fatal("Failed to marshall todos:\n", err)
 	}
 
 	helpers.WriteData(repository.dbFilePath, bytes)

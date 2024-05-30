@@ -15,6 +15,6 @@ var indexPageData = pages.PageData{
 func GetHandler(w http.ResponseWriter, _ *http.Request) {
 	err := indexTemplate.Execute(w, indexPageData)
 	if err != nil {
-		log.Fatal("Failed to render index page", err)
+		log.Fatal("Failed to render index page:\n", err)
 	}
 }

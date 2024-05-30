@@ -25,7 +25,7 @@ func (repository Repository) readNotes() *[]Note {
 	var notes []Note
 	err := json.Unmarshal(data, &notes)
 	if err != nil {
-		log.Fatal("Failed to read from database file", err)
+		log.Fatal("Failed to read from database file:\n", err)
 	}
 	return &notes
 }
@@ -33,7 +33,7 @@ func (repository Repository) readNotes() *[]Note {
 func (repository Repository) writeNotes(notes *[]Note) {
 	bytes, err := json.Marshal(notes)
 	if err != nil {
-		log.Fatal("Failed to marshall notes", err)
+		log.Fatal("Failed to marshall notes:\n", err)
 	}
 
 	helpers.WriteData(repository.dbFilePath, bytes)
