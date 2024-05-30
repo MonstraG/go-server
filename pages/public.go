@@ -17,6 +17,12 @@ func PublicHandler(w http.ResponseWriter, r *http.Request) {
 		log.Println("Failed to read file", err)
 	}
 
+	if strings.HasSuffix(path, ".ico") {
+		w.Header().Set("Content-Type", "image/x-icon")
+	}
+	if strings.HasSuffix(path, ".svg") {
+		w.Header().Set("Content-Type", "image/svg+xml")
+	}
 	if strings.HasSuffix(path, ".js") {
 		w.Header().Set("Content-Type", "text/javascript; charset=utf-8")
 	}
