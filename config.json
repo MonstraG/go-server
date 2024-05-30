@@ -1,5 +1,5 @@
 {
-  "host": "localhost:8080",
+  "host": "0.0.0.0:8080",
   "databaseFolder": "data/",
   "auth": {
     "username": "Admin",
