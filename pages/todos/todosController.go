@@ -54,11 +54,11 @@ func (controller Controller) ApiGetHandler(w http.ResponseWriter, _ *http.Reques
 	todos := controller.service.readTodos()
 	bytes, err := json.Marshal(todos)
 	if err != nil {
-		log.Print("Failed to marshal todos", err)
+		log.Print("Failed to marshal todos:\n", err)
 	}
 	_, err = w.Write(bytes)
 	if err != nil {
-		log.Print("Failed to write todos", err)
+		log.Print("Failed to write todos:\n", err)
 	}
 }
 
