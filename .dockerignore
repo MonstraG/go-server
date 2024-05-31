@@ -5,3 +5,4 @@ Dockerfile
 data
 .gitignore
 README.md
+build_size.log

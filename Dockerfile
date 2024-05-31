@@ -1,4 +1,5 @@
-# Multi-stage patterns https://medium.com/swlh/reducing-container-image-size-esp-for-go-applications-db7658e9063a
+# syntax=docker.io/docker/dockerfile:1.7-labs
+# the line above changes "syntax" https://docs.docker.com/build/dockerfile/frontend/, this syntax allows "exclude" arg for COPY
 
 # specifies a parent image:
 # this image is alpine3.20 + all the stuff you need to build a golang application
@@ -19,11 +20,12 @@ RUN go mod download
 RUN CGO_ENABLED=0 go build -o server.exe
 
 # switch to a new clean alpine without the golang stuff, much smaller
+# General article about so called multi-stage patterns: https://medium.com/swlh/reducing-container-image-size-esp-for-go-applications-db7658e9063a
 FROM alpine:3.20.0 as running-image
 
-# copy everything from our folder (so, repo + built executable) from our building-image into the same folder
-# but into the second image
-COPY --from=building-image /myapp /myapp
+# copy everything from our folder (so, repo + built executable) from our building-image into the same folder but into the second image
+# also exclude all the source files, so the final build is even smaller (although it saves like 20kb)
+COPY --exclude=**/*.go --exclude=go.mod --from=building-image /myapp /myapp
 
 # notify docker we are going to be using port 8080
 EXPOSE 8080

@@ -43,3 +43,5 @@ Right now it features:
 - two entities with common ID trait
 - manual Dependency Injection
 - basic auth
+- Docker
+- Watch build size with `make`
