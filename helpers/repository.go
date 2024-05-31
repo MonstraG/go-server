@@ -4,10 +4,16 @@ import (
 	"encoding/json"
 	"log"
 	"os"
+	"path"
 )
 
-func ReadData[T any](path string) *[]T {
-	bytes, err := os.ReadFile(path)
+func ReadData[T any](dbFilePath string) *[]T {
+	_, err := os.Stat(dbFilePath)
+	if os.IsNotExist(err) {
+		return &[]T{}
+	}
+
+	bytes, err := os.ReadFile(dbFilePath)
 	if err != nil {
 		log.Fatal("Failed to read database file:\n", err)
 	}
@@ -20,12 +26,16 @@ func ReadData[T any](path string) *[]T {
 	return &data
 }
 
-func WriteData(path string, data any) {
+func WriteData(dbFilePath string, data any) {
 	bytes, err := json.Marshal(data)
 	if err != nil {
 		log.Fatal("Failed to marshall data:\n", err)
 	}
-	err = os.WriteFile(path, bytes, 0666)
+	err = os.MkdirAll(path.Dir(dbFilePath), os.ModePerm)
+	if err != nil {
+		log.Fatal("Failed to create database dbFilePath:\n", err)
+	}
+	err = os.WriteFile(dbFilePath, bytes, os.ModePerm)
 	if err != nil {
 		log.Fatal("Failed to write database file:\n", err)
 	}

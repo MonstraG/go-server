@@ -3,9 +3,10 @@ package notes
 import (
 	"go-server/helpers"
 	"go-server/setup"
+	"path"
 )
 
-const dbFilePath = "notes.json"
+const databaseFile = "notes.json"
 
 type Repository struct {
 	dbFilePath string
@@ -13,7 +14,7 @@ type Repository struct {
 
 func NewRepository(config setup.AppConfig) Repository {
 	return Repository{
-		dbFilePath: config.DatabaseFolder + dbFilePath,
+		dbFilePath: path.Join(config.DatabaseFolder, databaseFile),
 	}
 }
 
