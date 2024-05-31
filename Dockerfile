@@ -12,7 +12,7 @@ WORKDIR /myapp
 # copy entire project there (except for what's listed in .dockerignore)
 COPY . .
 
-# install all dependencies
+# install all dependencies (of which there are zero, but just as an example, I'll do that anyway)
 RUN go mod download
 
 # run go build, name the executable "server.exe" and also disable CGO because people keep telling me that

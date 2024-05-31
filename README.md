@@ -31,6 +31,7 @@ So this is a project of me "trying it".
 It has no other dependencies or libs, other than `htmx` for less javascript (which seems to be all the rage these days).
 Right now it features:
 
+- no dependencies
 - routing
 - middleware
 - persistent database in its simplest form - a json file
