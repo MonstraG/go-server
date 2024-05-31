@@ -41,8 +41,14 @@ Right now it features:
 - htmx partials endpoint protection (redirect to 404 if not htmx request)
 - config.json
 - Two entities with common ID trait
-- "Pure DI" (not my name: https://blog.ploeh.dk/2014/06/10/pure-di/)
+- "Pure DI" ([not my name](https://blog.ploeh.dk/2014/06/10/pure-di/))
 - basic auth
 - Docker
 - Watch build size with `make`
 - teeny-tiny generics usage
+
+
+
+#### Other notes
+
+Default address is 0.0.0.0 not localhost [because docker](https://serverfault.com/questions/1084915/still-confused-why-docker-works-when-you-make-a-process-listen-to-0-0-0-0-but-no).
