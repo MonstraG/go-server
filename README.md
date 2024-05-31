@@ -45,3 +45,4 @@ Right now it features:
 - basic auth
 - Docker
 - Watch build size with `make`
+- teeny-tiny generics usage

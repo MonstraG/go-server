@@ -1,21 +1,31 @@
 package helpers
 
 import (
+	"encoding/json"
 	"log"
 	"os"
 )
 
-func ReadData(path string) []byte {
-	data, err := os.ReadFile(path)
+func ReadData[T any](path string) *[]T {
+	bytes, err := os.ReadFile(path)
 	if err != nil {
 		log.Fatal("Failed to read database file:\n", err)
 	}
 
-	return data
+	var data []T
+	err = json.Unmarshal(bytes, &data)
+	if err != nil {
+		log.Fatal("Failed to read from database file:\n", err)
+	}
+	return &data
 }
 
-func WriteData(path string, bytes []byte) {
-	err := os.WriteFile(path, bytes, 0666)
+func WriteData(path string, data any) {
+	bytes, err := json.Marshal(data)
+	if err != nil {
+		log.Fatal("Failed to marshall data:\n", err)
+	}
+	err = os.WriteFile(path, bytes, 0666)
 	if err != nil {
 		log.Fatal("Failed to write database file:\n", err)
 	}
