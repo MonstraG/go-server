@@ -31,6 +31,11 @@ func Validate(w helpers.MyWriter, r *http.Request) {
 		return
 	}
 
+	err = validateIHDRChunk(chunks)
+	if err != nil {
+		w.WriteResponse(http.StatusBadRequest, []byte(err.Error()))
+	}
+
 	chunksJson, err := json.Marshal(chunks)
 	if err != nil {
 		w.WriteResponse(http.StatusInternalServerError, []byte(err.Error()))
@@ -86,11 +91,7 @@ func isValidChunkType(chunkType string) bool {
 }
 
 func readChunks(body io.ReadCloser) ([]*Chunk, error) {
-	// http://www.libpng.org/pub/png/spec/1.2/png-1.2.pdf, paragraph 4.1
-	// A valid PNG image must contain an IHDR chunk, one or more IDAT chunks, and an IEND chunk
-	const minimumChunks = 3
-
-	chunks := make([]*Chunk, 0, minimumChunks)
+	chunks := make([]*Chunk, 0)
 	bytesRead := 0
 
 	for {
@@ -145,4 +146,45 @@ func readChunk(body io.ReadCloser) (*Chunk, error) {
 	}
 
 	return &Chunk{ChunkType: chunkType, Data: contentBuffer, Length: chunkLength}, nil
+}
+
+func validateIHDRChunk(chunks []*Chunk) error {
+	firstChunk := chunks[0]
+	if firstChunk.ChunkType != "IHDR" {
+		return fmt.Errorf("IHDR chunk must appear first, found %s instead", firstChunk.ChunkType)
+	}
+
+	widthBuffer := firstChunk.Data[0:4]
+	width := binary.BigEndian.Uint32(widthBuffer)
+	if width == 0 {
+		return fmt.Errorf("IHDR's width cannot be zero")
+	}
+
+	heightBuffer := firstChunk.Data[4:8]
+	height := binary.BigEndian.Uint32(heightBuffer)
+	if height == 0 {
+		return fmt.Errorf("IHDR's height cannot be zero")
+	}
+
+	bitDepth := int(firstChunk.Data[8])
+	colorType := int(firstChunk.Data[9])
+
+	bitDepthsByColorType := map[int][]int{
+		0: {1, 2, 4, 8, 16},
+		2: {8, 16},
+		3: {1, 2, 4, 8},
+		4: {8, 16},
+		6: {8, 16},
+	}
+
+	possibleBitDepths, found := bitDepthsByColorType[colorType]
+	if !found {
+		return fmt.Errorf("IHDR's color type is invalid, found %v", colorType)
+	}
+
+	if !slices.Contains(possibleBitDepths, bitDepth) {
+		return fmt.Errorf("IHDR's bit depth is invalid, found %v", bitDepth)
+	}
+
+	return nil
 }
