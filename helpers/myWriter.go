@@ -18,16 +18,7 @@ func (w MyWriter) WriteSilent(content []byte) {
 	}
 }
 
-func (w MyWriter) WriteStringSilent(content string) {
-	w.WriteSilent([]byte(content))
-}
-
-func (w MyWriter) WriteBadRequest(content string) {
-	w.WriteHeader(http.StatusBadRequest)
-	w.WriteStringSilent(content)
-}
-
-func (w MyWriter) WriteOk(content string) {
-	w.WriteHeader(http.StatusOK)
-	w.WriteStringSilent(content)
+func (w MyWriter) WriteResponse(status int, content []byte) {
+	w.WriteHeader(status)
+	w.WriteSilent(content)
 }

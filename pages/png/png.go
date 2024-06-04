@@ -3,6 +3,7 @@ package png
 import (
 	"bytes"
 	"encoding/binary"
+	"encoding/json"
 	"fmt"
 	"go-server/helpers"
 	"hash/crc32"
@@ -11,36 +12,45 @@ import (
 	"slices"
 )
 
+const maxAllowedPngSize = 10 * 1024 * 1024
+
 func Validate(w helpers.MyWriter, r *http.Request) {
 	ok, err := isValidPNGHeader(r.Body)
 	if err != nil {
-		w.WriteBadRequest(err.Error())
+		w.WriteResponse(http.StatusBadRequest, []byte(err.Error()))
 		return
 	}
 	if !ok {
-		w.WriteBadRequest("png is invalid")
+		w.WriteResponse(http.StatusBadRequest, []byte("png is invalid"))
 		return
 	}
 
-	chunk, err := readChunk(r.Body)
+	chunks, err := readChunks(r.Body)
 	if err != nil {
-		w.WriteBadRequest(err.Error())
+		w.WriteResponse(http.StatusBadRequest, []byte(err.Error()))
 		return
 	}
 
-	w.WriteOk(fmt.Sprintf("png is valid, first chunk is of type %v", chunk.ChunkType))
+	chunksJson, err := json.Marshal(chunks)
+	if err != nil {
+		w.WriteResponse(http.StatusInternalServerError, []byte(err.Error()))
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteResponse(http.StatusOK, chunksJson)
 }
 
 const validPNGHeader = "\x89PNG\r\n\x1a\n"
 
 func readBytesToBuffer(body io.ReadCloser, wantBytes int) ([]byte, error) {
 	buffer := make([]byte, wantBytes)
-	readBytes, err := body.Read(buffer)
+	readBytes, err := io.ReadAtLeast(body, buffer, wantBytes)
 	if err != nil {
 		return nil, err
 	}
 	if readBytes != wantBytes {
-		return nil, fmt.Errorf("expected to read %d bytes for header, but read %d bytes", wantBytes, readBytes)
+		return nil, fmt.Errorf("expected to read %d bytes, but read %d bytes", wantBytes, readBytes)
 	}
 	return buffer, nil
 }
@@ -75,6 +85,31 @@ func isValidChunkType(chunkType string) bool {
 		slices.Contains(ancillaryChunkTypes, chunkType)
 }
 
+func readChunks(body io.ReadCloser) ([]*Chunk, error) {
+	// http://www.libpng.org/pub/png/spec/1.2/png-1.2.pdf, paragraph 4.1
+	// A valid PNG image must contain an IHDR chunk, one or more IDAT chunks, and an IEND chunk
+	const minimumChunks = 3
+
+	chunks := make([]*Chunk, 0, minimumChunks)
+	bytesRead := 0
+
+	for {
+		chunk, err := readChunk(body)
+		if err != nil {
+			return nil, err
+		}
+		chunks = append(chunks, chunk)
+		if chunk.ChunkType == "IEND" {
+			return chunks, nil
+		}
+
+		bytesRead += chunk.Length
+		if bytesRead >= maxAllowedPngSize {
+			return nil, fmt.Errorf("PNG too big")
+		}
+	}
+}
+
 func readChunk(body io.ReadCloser) (*Chunk, error) {
 	chunkLengthBuffer, err := readBytesToBuffer(body, 4)
 	if err != nil {
@@ -93,6 +128,9 @@ func readChunk(body io.ReadCloser) (*Chunk, error) {
 	}
 
 	contentBuffer, err := readBytesToBuffer(body, chunkLength)
+	if err != nil {
+		return nil, err
+	}
 
 	crcBuffer, err := readBytesToBuffer(body, 4)
 	if err != nil {
@@ -106,5 +144,5 @@ func readChunk(body io.ReadCloser) (*Chunk, error) {
 		return nil, fmt.Errorf("CRC mismatch for chunk type: %s", chunkType)
 	}
 
-	return &Chunk{ChunkType: chunkType, Data: crcBuffer, Length: chunkLength}, nil
+	return &Chunk{ChunkType: chunkType, Data: contentBuffer, Length: chunkLength}, nil
 }
