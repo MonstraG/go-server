@@ -1,6 +1,7 @@
 package notFound
 
 import (
+	"go-server/helpers"
 	"go-server/pages"
 	"html/template"
 	"log"
@@ -12,14 +13,14 @@ var notFoundPageData = pages.PageData{
 	PageTitle: "404: page not found",
 }
 
-func GetHandler(w http.ResponseWriter, _ *http.Request) {
+func GetHandler(w helpers.MyWriter, _ *http.Request) {
 	err := notFoundTemplate.Execute(w, notFoundPageData)
 	if err != nil {
 		log.Fatal("Failed to render 404 page:\n", err)
 	}
 }
 
-func RedirectToNotFoundHandler(w http.ResponseWriter, _ *http.Request) {
+func RedirectToNotFoundHandler(w helpers.MyWriter, _ *http.Request) {
 	w.Header().Set("Location", "/404")
 	w.WriteHeader(http.StatusTemporaryRedirect)
 }

@@ -24,7 +24,7 @@ var todosPageData = pages.PageData{
 	PageTitle: "My todo list",
 }
 
-func (controller Controller) GetHandler(w http.ResponseWriter, _ *http.Request) {
+func (controller Controller) GetHandler(w helpers.MyWriter, _ *http.Request) {
 	err := todosTemplate.Execute(w, todosPageData)
 	if err != nil {
 		log.Fatal("Failed to render todos template:\n", err)
@@ -37,7 +37,7 @@ type ListDTO struct {
 	Todos []Todo
 }
 
-func (controller Controller) GetListHandler(w http.ResponseWriter, _ *http.Request) {
+func (controller Controller) GetListHandler(w helpers.MyWriter, _ *http.Request) {
 	todos := controller.service.readTodos()
 
 	pageModel := ListDTO{
@@ -50,19 +50,16 @@ func (controller Controller) GetListHandler(w http.ResponseWriter, _ *http.Reque
 	}
 }
 
-func (controller Controller) ApiGetHandler(w http.ResponseWriter, _ *http.Request) {
+func (controller Controller) ApiGetHandler(w helpers.MyWriter, _ *http.Request) {
 	todos := controller.service.readTodos()
 	bytes, err := json.Marshal(todos)
 	if err != nil {
 		log.Print("Failed to marshal todos:\n", err)
 	}
-	_, err = w.Write(bytes)
-	if err != nil {
-		log.Print("Failed to write todos:\n", err)
-	}
+	w.WriteSilent(bytes)
 }
 
-func (controller Controller) ApiPutHandler(w http.ResponseWriter, r *http.Request) {
+func (controller Controller) ApiPutHandler(w helpers.MyWriter, r *http.Request) {
 	id := helpers.ParseIdPathValueRespondErr(w, r)
 	if id == 0 {
 		return
@@ -84,7 +81,7 @@ func (controller Controller) ApiPutHandler(w http.ResponseWriter, r *http.Reques
 	w.WriteHeader(http.StatusOK)
 }
 
-func (controller Controller) ApiPostHandler(w http.ResponseWriter, r *http.Request) {
+func (controller Controller) ApiPostHandler(w helpers.MyWriter, r *http.Request) {
 	err := helpers.ParseFormRespondErr(w, r)
 	if err != nil {
 		return
@@ -102,7 +99,7 @@ func (controller Controller) ApiPostHandler(w http.ResponseWriter, r *http.Reque
 	w.WriteHeader(http.StatusOK)
 }
 
-func (controller Controller) ApiDelHandler(w http.ResponseWriter, r *http.Request) {
+func (controller Controller) ApiDelHandler(w helpers.MyWriter, r *http.Request) {
 	id := helpers.ParseIdPathValueRespondErr(w, r)
 	if id == 0 {
 		return

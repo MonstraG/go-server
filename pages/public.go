@@ -2,13 +2,15 @@ package pages
 
 import (
 	"fmt"
+	"go-server/helpers"
 	"log"
 	"net/http"
 	"os"
 	"strings"
 )
 
-func PublicHandler(w http.ResponseWriter, r *http.Request) {
+func PublicHandler(w helpers.MyWriter, r *http.Request) {
+	lw := helpers.MyWriter{ResponseWriter: w}
 	pathQueryParam := r.PathValue("path")
 	path := fmt.Sprintf("public/%s", pathQueryParam)
 
@@ -29,8 +31,6 @@ func PublicHandler(w http.ResponseWriter, r *http.Request) {
 	if strings.HasSuffix(path, ".css") {
 		w.Header().Set("Content-Type", "text/css; charset=utf-8")
 	}
-	_, err = w.Write(content)
-	if err != nil {
-		log.Println("Failed to write file to response", err)
-	}
+
+	lw.WriteSilent(content)
 }

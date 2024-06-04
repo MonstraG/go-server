@@ -1,6 +1,7 @@
 package index
 
 import (
+	"go-server/helpers"
 	"go-server/pages"
 	"html/template"
 	"log"
@@ -12,7 +13,7 @@ var indexPageData = pages.PageData{
 	PageTitle: "Homepage",
 }
 
-func GetHandler(w http.ResponseWriter, _ *http.Request) {
+func GetHandler(w helpers.MyWriter, _ *http.Request) {
 	err := indexTemplate.Execute(w, indexPageData)
 	if err != nil {
 		log.Fatal("Failed to render index page:\n", err)

@@ -27,7 +27,7 @@ type ListDTO struct {
 	Notes []Note
 }
 
-func (controller Controller) GetHandler(w http.ResponseWriter, _ *http.Request) {
+func (controller Controller) GetHandler(w helpers.MyWriter, _ *http.Request) {
 	err := notesTemplate.Execute(w, notesPageData)
 	if err != nil {
 		log.Fatal("Failed to render notes template:\n", err)
@@ -36,7 +36,7 @@ func (controller Controller) GetHandler(w http.ResponseWriter, _ *http.Request) 
 
 var notesListTemplate = template.Must(template.ParseFiles("pages/notes/tmpl/notesList.gohtml"))
 
-func (controller Controller) GetListHandler(w http.ResponseWriter, _ *http.Request) {
+func (controller Controller) GetListHandler(w helpers.MyWriter, _ *http.Request) {
 	notes := controller.service.readNotes()
 
 	pageModel := ListDTO{
@@ -56,7 +56,7 @@ type notePageDTO struct {
 	Note Note
 }
 
-func (controller Controller) GetNoteHandler(w http.ResponseWriter, r *http.Request) {
+func (controller Controller) GetNoteHandler(w helpers.MyWriter, r *http.Request) {
 	id := helpers.ParseIdPathValueRespondErr(w, r)
 	if id == 0 {
 		return
@@ -78,7 +78,7 @@ func (controller Controller) GetNoteHandler(w http.ResponseWriter, r *http.Reque
 
 var noteEditTemplate = template.Must(template.ParseFiles("pages/notes/tmpl/noteEdit.gohtml"))
 
-func (controller Controller) GetNoteEditHandler(w http.ResponseWriter, r *http.Request) {
+func (controller Controller) GetNoteEditHandler(w helpers.MyWriter, r *http.Request) {
 	id := helpers.ParseIdPathValueRespondErr(w, r)
 	if id == 0 {
 		return
@@ -93,7 +93,7 @@ func (controller Controller) GetNoteEditHandler(w http.ResponseWriter, r *http.R
 	}
 }
 
-func (controller Controller) ApiPutHandler(w http.ResponseWriter, r *http.Request) {
+func (controller Controller) ApiPutHandler(w helpers.MyWriter, r *http.Request) {
 	id := helpers.ParseIdPathValueRespondErr(w, r)
 	if id == 0 {
 		return
@@ -121,7 +121,7 @@ func (controller Controller) ApiPutHandler(w http.ResponseWriter, r *http.Reques
 	w.WriteHeader(http.StatusOK)
 }
 
-func (controller Controller) ApiPostHandler(w http.ResponseWriter, r *http.Request) {
+func (controller Controller) ApiPostHandler(w helpers.MyWriter, r *http.Request) {
 	err := helpers.ParseFormRespondErr(w, r)
 	if err != nil {
 		return
@@ -140,7 +140,7 @@ func (controller Controller) ApiPostHandler(w http.ResponseWriter, r *http.Reque
 	w.WriteHeader(http.StatusOK)
 }
 
-func (controller Controller) ApiDelHandler(w http.ResponseWriter, r *http.Request) {
+func (controller Controller) ApiDelHandler(w helpers.MyWriter, r *http.Request) {
 	id := helpers.ParseIdPathValueRespondErr(w, r)
 	if id == 0 {
 		return
