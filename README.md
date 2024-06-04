@@ -34,6 +34,7 @@ Right now it features:
 - no dependencies
 - routing
 - middleware
+- middleware that wraps/modifies `http.ResponseWriter`
 - persistent database in its simplest form - a json file
 - CRUD
 - 404 page

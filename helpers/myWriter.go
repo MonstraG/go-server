@@ -11,13 +11,23 @@ type MyWriter struct {
 }
 
 // WriteSilent calls w.Write without telling you the result
-func (w MyWriter) WriteSilent(p []byte) {
-	_, err := w.ResponseWriter.Write(p)
+func (w MyWriter) WriteSilent(content []byte) {
+	_, err := w.ResponseWriter.Write(content)
 	if err != nil {
 		log.Printf("Write failed: %v", err)
 	}
 }
 
-func (w MyWriter) WriteStringSilent(p string) {
-	w.WriteSilent([]byte(p))
+func (w MyWriter) WriteStringSilent(content string) {
+	w.WriteSilent([]byte(content))
+}
+
+func (w MyWriter) WriteBadRequest(content string) {
+	w.WriteHeader(http.StatusBadRequest)
+	w.WriteStringSilent(content)
+}
+
+func (w MyWriter) WriteOk(content string) {
+	w.WriteHeader(http.StatusOK)
+	w.WriteStringSilent(content)
 }
