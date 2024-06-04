@@ -7,13 +7,13 @@ import (
 )
 
 // ParseFormRespondErr runs http.Request ParseForm, logs errors and writes http.StatusBadRequest to http.ResponseWriter
-func ParseFormRespondErr(w MyWriter, r *http.Request) error {
+func ParseFormRespondErr(w MyWriter, r *http.Request) bool {
 	err := r.ParseForm()
 	if err != nil {
 		log.Println("Failed to parse form")
 		w.WriteHeader(http.StatusBadRequest)
 	}
-	return err
+	return err != nil
 }
 
 // ParseIdPathValueRespondErr tries to get 'id' from r.PathValue(),

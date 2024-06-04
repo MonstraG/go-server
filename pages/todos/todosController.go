@@ -64,14 +64,14 @@ func (controller Controller) ApiPutHandler(w helpers.MyWriter, r *http.Request) 
 	if id == 0 {
 		return
 	}
-	err := helpers.ParseFormRespondErr(w, r)
-	if err != nil {
+	ok := helpers.ParseFormRespondErr(w, r)
+	if !ok {
 		return
 	}
 
 	done := r.Form.Get("done") == "on"
 
-	err = controller.service.setTodoDoneState(id, done)
+	err := controller.service.setTodoDoneState(id, done)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		log.Print(err)
@@ -82,8 +82,8 @@ func (controller Controller) ApiPutHandler(w helpers.MyWriter, r *http.Request) 
 }
 
 func (controller Controller) ApiPostHandler(w helpers.MyWriter, r *http.Request) {
-	err := helpers.ParseFormRespondErr(w, r)
-	if err != nil {
+	ok := helpers.ParseFormRespondErr(w, r)
+	if !ok {
 		return
 	}
 

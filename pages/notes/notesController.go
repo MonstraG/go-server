@@ -98,8 +98,8 @@ func (controller Controller) ApiPutHandler(w helpers.MyWriter, r *http.Request) 
 	if id == 0 {
 		return
 	}
-	err := helpers.ParseFormRespondErr(w, r)
-	if err != nil {
+	ok := helpers.ParseFormRespondErr(w, r)
+	if !ok {
 		return
 	}
 
@@ -110,7 +110,7 @@ func (controller Controller) ApiPutHandler(w helpers.MyWriter, r *http.Request) 
 	}
 	description := r.Form.Get("description")
 
-	err = controller.service.updateNote(id, title, description)
+	err := controller.service.updateNote(id, title, description)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		log.Print(err)
@@ -122,8 +122,8 @@ func (controller Controller) ApiPutHandler(w helpers.MyWriter, r *http.Request) 
 }
 
 func (controller Controller) ApiPostHandler(w helpers.MyWriter, r *http.Request) {
-	err := helpers.ParseFormRespondErr(w, r)
-	if err != nil {
+	ok := helpers.ParseFormRespondErr(w, r)
+	if !ok {
 		return
 	}
 
