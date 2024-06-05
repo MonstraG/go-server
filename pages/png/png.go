@@ -188,5 +188,24 @@ func validateIHDRChunk(chunks []*Chunk) error {
 		return fmt.Errorf("IHDR's bit depth is invalid, found %v", bitDepth)
 	}
 
+	compression := int(firstChunk.Data[10])
+	if compression != 0 {
+		return fmt.Errorf("IHDR's compression is invalid, found %v, only '0' is valid", compression)
+	}
+
+	filterMethod := int(firstChunk.Data[11])
+	if filterMethod != 0 {
+		return fmt.Errorf("IHDR's filter method is invalid, found %v, only '0' is valid", filterMethod)
+	}
+
+	interlace := int(firstChunk.Data[12])
+	if interlace != 0 && interlace != 1 {
+		return fmt.Errorf("IHDR's interlace is invalid, found %v, only '0' or '1' are valid", interlace)
+	}
+
+	if len(firstChunk.Data) > 12 {
+		return fmt.Errorf("IHDR's data is invalid, found more data after 13 required bytes")
+	}
+
 	return nil
 }
