@@ -33,7 +33,7 @@ func Validate(w helpers.MyWriter, r *http.Request) {
 		return
 	}
 
-	err = validateIHDRChunk(chunks)
+	err = validateChunks(chunks)
 	if err != nil {
 		w.WriteResponse(http.StatusBadRequest, []byte(err.Error()))
 	}
@@ -150,26 +150,48 @@ func readChunk(body io.ReadCloser) (*Chunk, error) {
 	return &Chunk{ChunkType: chunkType, Data: contentBuffer, Length: chunkLength}, nil
 }
 
-func validateIHDRChunk(chunks []*Chunk) error {
-	firstChunk := chunks[0]
-	if firstChunk.ChunkType != "IHDR" {
-		return fmt.Errorf("IHDR chunk must appear first, found %s instead", firstChunk.ChunkType)
-	}
+func validateChunks(chunks []*Chunk) error {
+	for chunkIndex, chunk := range chunks[1:] {
+		if chunkIndex == 0 {
+			if chunk.ChunkType != "IHDR" {
+				return fmt.Errorf(
+					"IHDR chunk must appear first, found %s instead",
+					chunk.ChunkType)
+			}
 
-	widthBuffer := firstChunk.Data[0:4]
+			err := validateIHDRChunk(chunk)
+			if err != nil {
+				return err
+			}
+			continue
+		}
+
+		if chunk.ChunkType == "PLTE" {
+			err := validatePLTEChunk(chunk)
+			if err != nil {
+				return err
+			}
+			continue
+		}
+	}
+	return nil
+}
+
+func validateIHDRChunk(chunk *Chunk) error {
+	widthBuffer := chunk.Data[0:4]
 	width := binary.BigEndian.Uint32(widthBuffer)
 	if width == 0 {
 		return fmt.Errorf("IHDR's width cannot be zero")
 	}
 
-	heightBuffer := firstChunk.Data[4:8]
+	heightBuffer := chunk.Data[4:8]
 	height := binary.BigEndian.Uint32(heightBuffer)
 	if height == 0 {
 		return fmt.Errorf("IHDR's height cannot be zero")
 	}
 
-	bitDepth := int(firstChunk.Data[8])
-	colorType := int(firstChunk.Data[9])
+	bitDepth := int(chunk.Data[8])
+	colorType := int(chunk.Data[9])
 
 	bitDepthsByColorType := map[int][]int{
 		0: {1, 2, 4, 8, 16},
@@ -188,24 +210,31 @@ func validateIHDRChunk(chunks []*Chunk) error {
 		return fmt.Errorf("IHDR's bit depth is invalid, found %v", bitDepth)
 	}
 
-	compression := int(firstChunk.Data[10])
+	compression := int(chunk.Data[10])
 	if compression != 0 {
 		return fmt.Errorf("IHDR's compression is invalid, found %v, only '0' is valid", compression)
 	}
 
-	filterMethod := int(firstChunk.Data[11])
+	filterMethod := int(chunk.Data[11])
 	if filterMethod != 0 {
 		return fmt.Errorf("IHDR's filter method is invalid, found %v, only '0' is valid", filterMethod)
 	}
 
-	interlace := int(firstChunk.Data[12])
+	interlace := int(chunk.Data[12])
 	if interlace != 0 && interlace != 1 {
 		return fmt.Errorf("IHDR's interlace is invalid, found %v, only '0' or '1' are valid", interlace)
 	}
 
-	if len(firstChunk.Data) > 12 {
+	if len(chunk.Data) > 12 {
 		return fmt.Errorf("IHDR's data is invalid, found more data after 13 required bytes")
 	}
 
+	return nil
+}
+
+func validatePLTEChunk(chunk *Chunk) error {
+	if chunk.Length%3 != 0 {
+		return fmt.Errorf("PLTE chunk's length must be a multiple of 3 (pallete colors have 3 channels, RGB)")
+	}
 	return nil
 }
