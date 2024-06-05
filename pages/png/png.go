@@ -14,6 +14,8 @@ import (
 
 const maxAllowedPngSize = 10 * 1024 * 1024
 
+// Validate accepts a PNG, checks it according to the PNG specification www.libpng.org/pub/png/spec/1.2/png-1.2.pdf
+// and returns parsed chunks as JSON body
 func Validate(w helpers.MyWriter, r *http.Request) {
 	ok, err := isValidPNGHeader(r.Body)
 	if err != nil {
