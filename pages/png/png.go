@@ -14,7 +14,8 @@ import (
 
 const maxAllowedPngSize = 10 * 1024 * 1024
 
-// Validate accepts a PNG, checks it according to the PNG specification www.libpng.org/pub/png/spec/1.2/png-1.2.pdf
+// Validate accepts a PNG, checks it according to the PNG specification
+// http://www.libpng.org/pub/png/spec/1.2/png-1.2.pdf
 // and returns parsed chunks as JSON body
 func Validate(w helpers.MyWriter, r *http.Request) {
 	ok, err := isValidPNGHeader(r.Body)
@@ -77,7 +78,11 @@ type Chunk struct {
 }
 
 var criticalChunkTypes = []string{"IHDR", "PLTE", "IDAT", "IEND"}
-var ancillaryChunkTypes = []string{"bKGD", "cHRM", "cICP", "dSIG", "eXIf", "gAMA", "hIST", "iCCP", "iTXt", "pHYs", "sBIT", "sPLT", "sRGB", "sTER", "tEXt", "tIME", "tRNS", "zTXt"}
+var ancillaryChunkTypes = []string{
+	"bKGD", "cHRM", "cICP", "dSIG", "eXIf",
+	"gAMA", "hIST", "iCCP", "iTXt", "pHYs",
+	"sBIT", "sPLT", "sRGB", "sTER", "tEXt",
+	"tIME", "tRNS", "zTXt"}
 
 func (chunk *Chunk) IsCritical() bool {
 	return slices.Contains(criticalChunkTypes, chunk.ChunkType)
@@ -151,43 +156,63 @@ func readChunk(body io.ReadCloser) (*Chunk, error) {
 }
 
 func validateChunks(chunks []*Chunk) error {
-	for chunkIndex, chunk := range chunks[1:] {
-		if chunkIndex == 0 {
-			if chunk.ChunkType != "IHDR" {
-				return fmt.Errorf(
-					"IHDR chunk must appear first, found %s instead",
-					chunk.ChunkType)
-			}
+	var firstChunk = chunks[0]
+	if firstChunk.ChunkType != "IHDR" {
+		return fmt.Errorf(
+			"IHDR chunk must appear first, PLTEFound %s instead",
+			firstChunk.ChunkType)
+	}
 
-			err := validateIHDRChunk(chunk)
-			if err != nil {
-				return err
-			}
+	plteRequirements, err := validateIHDRChunk(firstChunk)
+	if err != nil {
+		return err
+	}
+
+	for chunkIndex, chunk := range chunks {
+		if chunkIndex == 0 {
+			// not just chunks[1:] to keep chunk index
 			continue
 		}
 
-		if chunk.ChunkType == "PLTE" {
-			err := validatePLTEChunk(chunk)
-			if err != nil {
-				return err
-			}
-			continue
+		err = validateChunk(chunk, plteRequirements)
+		if err != nil {
+			return err
 		}
 	}
 	return nil
 }
 
-func validateIHDRChunk(chunk *Chunk) error {
+func validateChunk(chunk *Chunk, plteRequirements *ValidatorState) error {
+	switch chunk.ChunkType {
+	case "PLTE":
+		err := validatePLTEChunk(chunk, plteRequirements)
+		if err != nil {
+			return err
+		}
+	case "IDAT":
+		plteRequirements.IDATFound = true
+	}
+	return nil
+}
+
+type ValidatorState struct {
+	PLTERequired    bool
+	PLTEDissallowed bool
+	PLTEFound       bool
+	IDATFound       bool
+}
+
+func validateIHDRChunk(chunk *Chunk) (*ValidatorState, error) {
 	widthBuffer := chunk.Data[0:4]
 	width := binary.BigEndian.Uint32(widthBuffer)
 	if width == 0 {
-		return fmt.Errorf("IHDR's width cannot be zero")
+		return nil, fmt.Errorf("IHDR's width cannot be zero")
 	}
 
 	heightBuffer := chunk.Data[4:8]
 	height := binary.BigEndian.Uint32(heightBuffer)
 	if height == 0 {
-		return fmt.Errorf("IHDR's height cannot be zero")
+		return nil, fmt.Errorf("IHDR's height cannot be zero")
 	}
 
 	bitDepth := int(chunk.Data[8])
@@ -203,38 +228,62 @@ func validateIHDRChunk(chunk *Chunk) error {
 
 	possibleBitDepths, found := bitDepthsByColorType[colorType]
 	if !found {
-		return fmt.Errorf("IHDR's color type is invalid, found %v", colorType)
+		return nil, fmt.Errorf("IHDR's color type is invalid, PLTEFound %v", colorType)
 	}
 
 	if !slices.Contains(possibleBitDepths, bitDepth) {
-		return fmt.Errorf("IHDR's bit depth is invalid, found %v", bitDepth)
+		return nil, fmt.Errorf("IHDR's bit depth is invalid, PLTEFound %v", bitDepth)
 	}
 
 	compression := int(chunk.Data[10])
 	if compression != 0 {
-		return fmt.Errorf("IHDR's compression is invalid, found %v, only '0' is valid", compression)
+		return nil, fmt.Errorf("IHDR's compression is invalid, PLTEFound %v, only '0' is valid", compression)
 	}
 
 	filterMethod := int(chunk.Data[11])
 	if filterMethod != 0 {
-		return fmt.Errorf("IHDR's filter method is invalid, found %v, only '0' is valid", filterMethod)
+		return nil, fmt.Errorf("IHDR's filter method is invalid, PLTEFound %v, only '0' is valid", filterMethod)
 	}
 
 	interlace := int(chunk.Data[12])
 	if interlace != 0 && interlace != 1 {
-		return fmt.Errorf("IHDR's interlace is invalid, found %v, only '0' or '1' are valid", interlace)
+		return nil, fmt.Errorf("IHDR's interlace is invalid, PLTEFound %v, only '0' or '1' are valid", interlace)
 	}
 
 	if len(chunk.Data) > 12 {
-		return fmt.Errorf("IHDR's data is invalid, found more data after 13 required bytes")
+		return nil, fmt.Errorf("IHDR's data is invalid, PLTEFound more data after 13 PLTERequired bytes")
 	}
 
-	return nil
+	PLTERequired := false
+	if colorType == 3 {
+		PLTERequired = true
+	}
+
+	PLTEDisallowed := false
+	if colorType == 0 || colorType == 4 {
+		PLTEDisallowed = true
+	}
+
+	return &ValidatorState{
+		PLTERequired:    PLTERequired,
+		PLTEDissallowed: PLTEDisallowed,
+	}, nil
 }
 
-func validatePLTEChunk(chunk *Chunk) error {
+func validatePLTEChunk(chunk *Chunk, requirements *ValidatorState) error {
+	if requirements.PLTEFound {
+		return fmt.Errorf("found second PLTE chunk")
+	}
+	if requirements.IDATFound {
+		return fmt.Errorf("found IDAT chunk earlier than PLTE chunk")
+	}
+	if requirements.PLTEDissallowed {
+		return fmt.Errorf("PLTE must not appear due to specified color mode")
+	}
 	if chunk.Length%3 != 0 {
 		return fmt.Errorf("PLTE chunk's length must be a multiple of 3 (pallete colors have 3 channels, RGB)")
 	}
+
+	requirements.PLTEFound = true
 	return nil
 }
