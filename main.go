@@ -2,6 +2,7 @@ package main
 
 import (
 	"go-server/pages"
+	"go-server/pages/dictionary"
 	"go-server/pages/index"
 	"go-server/pages/notFound"
 	"go-server/pages/notes"
@@ -36,6 +37,7 @@ func main() {
 	app.HandleFunc("GET /todos", todosController.GetHandler)
 	app.HandleFunc("GET /notes", notesController.GetHandler)
 	app.HandleFunc("GET /notes/{id}", notesController.GetNoteHandler)
+	app.HandleFunc("GET /dictionary", dictionary.GetHandler)
 
 	// partials
 	app.HandleFunc("GET /todosList", setup.HtmxPartialMiddleware(todosController.GetListHandler))

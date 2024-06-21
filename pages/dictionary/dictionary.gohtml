@@ -1,0 +1,27 @@
+{{define "content"}}
+<h1>{{.PageTitle}}</h1>
+<table>
+    <thead>
+        <tr>
+            <th>Original</th>
+            <th>Translation</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+    {{range .Entries}}
+        <tr>
+            <td>
+                {{.Original}}
+            </td>
+            <td>
+                {{.Translation}}
+            </td>
+            <td>
+                <button>Delete</button>
+            </td>
+        </tr>
+    {{end}}
+    </tbody>
+</table>
+{{end}}
