@@ -32,8 +32,7 @@ func main() {
 
 	// pages
 	app.HandleFunc("GET /{$}", index.GetHandler)
-	app.HandleFunc("GET /404", notFound.GetHandler)
-	app.HandleFunc("GET /*", notFound.RedirectToNotFoundHandler)
+	app.HandleFunc("GET /*", notFound.GetHandler)
 	app.HandleFunc("GET /todos", todosController.GetHandler)
 	app.HandleFunc("GET /notes", notesController.GetHandler)
 	app.HandleFunc("GET /notes/{id}", notesController.GetNoteHandler)

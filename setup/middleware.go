@@ -37,7 +37,7 @@ func HtmxPartialMiddleware(next HandlerFn) HandlerFn {
 	return func(w helpers.MyWriter, r *http.Request) {
 		isHtmxRequest := r.Header.Get("Hx-Request") == "true"
 		if !isHtmxRequest {
-			notFound.RedirectToNotFoundHandler(w, r)
+			notFound.GetHandler(w, r)
 			return
 		}
 
