@@ -12,8 +12,9 @@ func ParseFormRespondErr(w MyWriter, r *http.Request) bool {
 	if err != nil {
 		log.Println("Failed to parse form")
 		w.WriteHeader(http.StatusBadRequest)
+		return false
 	}
-	return err != nil
+	return true
 }
 
 // ParseIdPathValueRespondErr tries to get 'id' from r.PathValue(),

@@ -11,6 +11,6 @@
         <button hx-get="/notes/{{.Note.Id}}/edit">
             Edit note
         </button>
-        <button hx-delete="/api/notes/{{.Note.Id}}" hx-target="none" hx-swap="none">Delete note</button>
+        <button hx-delete="/api/notes/{{.Note.Id}}" hx-target="this" hx-swap="none">Delete note</button>
     </div>
 {{end}}
