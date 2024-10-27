@@ -110,7 +110,7 @@ func (controller Controller) ApiPutHandler(w helpers.MyWriter, r *helpers.MyRequ
 	}
 	description := r.Form.Get("description")
 
-	err := controller.service.updateNote(id, title, description)
+	err := controller.service.updateNote(id, title, description, r.Username)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		log.Print(err)
@@ -134,7 +134,7 @@ func (controller Controller) ApiPostHandler(w helpers.MyWriter, r *helpers.MyReq
 	}
 	description := r.Form.Get("description")
 
-	controller.service.addNote(title, description)
+	controller.service.addNote(title, description, r.Username)
 
 	w.Header().Set("HX-Trigger", "revalidateNotes")
 	w.WriteHeader(http.StatusOK)

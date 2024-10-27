@@ -71,7 +71,7 @@ func (controller Controller) ApiPutHandler(w helpers.MyWriter, r *helpers.MyRequ
 
 	done := r.Form.Get("done") == "on"
 
-	err := controller.service.setTodoDoneState(id, done)
+	err := controller.service.setTodoDoneState(id, done, r.Username)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		log.Print(err)
@@ -93,7 +93,7 @@ func (controller Controller) ApiPostHandler(w helpers.MyWriter, r *helpers.MyReq
 		return
 	}
 
-	controller.service.addTodo(title)
+	controller.service.addTodo(title, r.Username)
 
 	w.Header().Set("HX-Trigger", "revalidateTodos")
 	w.WriteHeader(http.StatusOK)

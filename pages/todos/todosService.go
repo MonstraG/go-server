@@ -34,20 +34,21 @@ func (service Service) deleteTodoById(id int) error {
 	return nil
 }
 
-func (service Service) addTodo(title string) {
+func (service Service) addTodo(title string, updatedBy string) {
 	todos := service.repository.readTodos()
 
 	*todos = append(*todos, Todo{
-		Id:      helpers.GenerateNextId(todos),
-		Title:   title,
-		Created: time.Now(),
-		Updated: time.Now(),
+		Id:        helpers.GenerateNextId(todos),
+		Title:     title,
+		Created:   time.Now(),
+		Updated:   time.Now(),
+		UpdatedBy: updatedBy,
 	})
 
 	service.repository.writeTodos(todos)
 }
 
-func (service Service) setTodoDoneState(id int, done bool) error {
+func (service Service) setTodoDoneState(id int, done bool, updatedBy string) error {
 	todos := service.repository.readTodos()
 
 	_, todo := helpers.FindByID(todos, id)
@@ -57,6 +58,7 @@ func (service Service) setTodoDoneState(id int, done bool) error {
 
 	todo.Done = done
 	todo.Updated = time.Now()
+	todo.UpdatedBy = updatedBy
 	service.repository.writeTodos(todos)
 	return nil
 }

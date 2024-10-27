@@ -34,7 +34,7 @@ func (service Service) deleteNoteById(id int) error {
 	return nil
 }
 
-func (service Service) updateNote(id int, title string, description string) error {
+func (service Service) updateNote(id int, title string, description string, updatedBy string) error {
 	notes := service.repository.readNotes()
 	_, note := helpers.FindByID(notes, id)
 	if note == nil {
@@ -44,13 +44,14 @@ func (service Service) updateNote(id int, title string, description string) erro
 	note.Title = title
 	note.Description = description
 	note.Updated = time.Now()
+	note.UpdatedBy = updatedBy
 
 	service.repository.writeNotes(notes)
 
 	return nil
 }
 
-func (service Service) addNote(title string, description string) {
+func (service Service) addNote(title string, description string, updatedBy string) {
 	notes := service.repository.readNotes()
 
 	*notes = append(*notes, Note{
@@ -59,6 +60,7 @@ func (service Service) addNote(title string, description string) {
 		Description: description,
 		Created:     time.Now(),
 		Updated:     time.Now(),
+		UpdatedBy:   updatedBy,
 	})
 
 	service.repository.writeNotes(notes)
