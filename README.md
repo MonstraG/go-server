@@ -34,6 +34,8 @@ Right now it features:
 
 - no dependencies
 - routing
+- static files route
+- ETags for static files
 - middleware
 - middleware that wraps/modifies `http.ResponseWriter`
 - persistent database in its simplest form - a json file

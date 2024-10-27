@@ -1,15 +1,16 @@
 package pages
 
 import (
+	"bytes"
+	"crypto/sha256"
+	"encoding/hex"
+	"fmt"
 	"go-server/helpers"
 	"log"
 	"net/http"
 	"os"
 	"path/filepath"
 )
-
-// todo: add e-tags
-// https://github.com/RHEnVision/provisioning-backend/blob/381501251cf9c09bdd2f860d43b113af271a792c/internal/middleware/etag_middleware.go
 
 // todo: add gzip
 
@@ -29,12 +30,28 @@ func PublicHandler(w helpers.MyWriter, r *http.Request) {
 		return
 	}
 
-	file, err := os.Open(filename)
+	file, err := os.ReadFile(filename)
 	if err != nil {
-		log.Printf("Failed to open file %s: %v", filename, err)
+		log.Printf("Failed to read file %s: %v", filename, err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
-	http.ServeContent(lw, r, filename, fileInfo.ModTime(), file)
+	eTag := calculateETag(file)
+	w.Header().Set("ETag", eTag)
+
+	readSeeker := bytes.NewReader(file)
+
+	// this handles ETag matches inside
+	http.ServeContent(lw, r, filename, fileInfo.ModTime(), readSeeker)
+}
+
+var hasher = sha256.New()
+
+// calculateETag generates a SHA-256 hash of the content and adds `W/` prefix to a hash to indicate weak comparison
+func calculateETag(content []byte) string {
+	hasher.Reset()
+	hasher.Write(content)
+	hash := hex.EncodeToString(hasher.Sum(nil))
+	return fmt.Sprintf("W/\"%s\"", hash)
 }
