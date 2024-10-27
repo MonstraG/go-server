@@ -19,8 +19,8 @@ COPY . .
 # install all dependencies (of which there are zero, but just as an example, I'll do that anyway)
 RUN go mod download
 
-# run go build, name the executable "server.exe" and also disable CGO because people keep telling me that
-RUN CGO_ENABLED=0 go build -o server.exe
+# run go build, name the executable "go-server" and also disable CGO because people keep telling me that
+RUN CGO_ENABLED=0 go build -o go-server
 
 # switch to a new clean alpine without the golang stuff, much smaller
 # General article about so called multi-stage patterns: https://medium.com/swlh/reducing-container-image-size-esp-for-go-applications-db7658e9063a
@@ -38,4 +38,4 @@ EXPOSE 8080
 WORKDIR /myapp
 
 # tell docker what to run
-ENTRYPOINT ["/myapp/server.exe"]
+ENTRYPOINT ["/myapp/go-server"]
