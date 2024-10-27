@@ -23,6 +23,7 @@ func MyWriterWrapperMiddleware(next HandlerFn) func(w http.ResponseWriter, r *ht
 
 // LoggingMiddleware is a Middleware that logs a hit and time taken to answer
 func LoggingMiddleware(next HandlerFn) HandlerFn {
+	log.SetFlags(log.Ldate | log.Ltime | log.Lshortfile | log.LUTC)
 	return func(w helpers.MyWriter, r *http.Request) {
 		start := time.Now()
 		log.Printf("Started %s %s", r.Method, r.URL.Path)
