@@ -41,6 +41,7 @@ Right now it features:
 - redirect to 404 on unknown urls
 - htmx partials endpoint protection (redirect to 404 if not htmx request)
 - config.json
+- command line flag for where to get config.json from
 - Two entities with common ID trait
 - "Pure DI" ([not my name](https://blog.ploeh.dk/2014/06/10/pure-di/))
 - basic auth

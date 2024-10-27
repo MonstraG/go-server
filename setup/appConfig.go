@@ -2,11 +2,10 @@ package setup
 
 import (
 	"encoding/json"
+	"flag"
 	"log"
 	"os"
 )
-
-const configPath = "config.json"
 
 type AppConfig struct {
 	Host           string `json:"host"`
@@ -20,6 +19,8 @@ type Auth struct {
 }
 
 func ReadConfig() AppConfig {
+	configPath := readConfigPath()
+
 	configJson, err := os.ReadFile(configPath)
 	if err != nil {
 		log.Fatalf("Failed to read config file in %s", configPath)
@@ -32,4 +33,11 @@ func ReadConfig() AppConfig {
 	}
 
 	return config
+}
+
+func readConfigPath() string {
+	configPathVar := flag.String("config", "config.json", "Path to json config for the server")
+	flag.Parse()
+	log.Printf("Loading config from \"%s\"", *configPathVar)
+	return *configPathVar
 }
