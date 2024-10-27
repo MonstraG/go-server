@@ -1,6 +1,9 @@
 package notes
 
-import "time"
+import (
+	"go-server/helpers"
+	"time"
+)
 
 type Note struct {
 	Id          int       `json:"id"`
@@ -13,4 +16,21 @@ type Note struct {
 
 func (n Note) ID() int {
 	return n.Id
+}
+
+func NewNote(r *helpers.MyRequest) *Note {
+	title := r.Form.Get("title")
+	if title == "" {
+		return nil
+	}
+
+	description := r.Form.Get("description")
+
+	return &Note{
+		Title:       title,
+		Description: description,
+		Created:     time.Now(),
+		Updated:     time.Now(),
+		UpdatedBy:   r.Username,
+	}
 }

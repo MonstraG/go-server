@@ -51,17 +51,12 @@ func (service Service) updateNote(id int, title string, description string, upda
 	return nil
 }
 
-func (service Service) addNote(title string, description string, updatedBy string) {
+func (service Service) addNote(note Note) {
 	notes := service.repository.readNotes()
 
-	notes = append(notes, Note{
-		Id:          helpers.GenerateNextId(notes),
-		Title:       title,
-		Description: description,
-		Created:     time.Now(),
-		Updated:     time.Now(),
-		UpdatedBy:   updatedBy,
-	})
+	note.Id = helpers.GenerateNextId(notes)
+
+	notes = append(notes, note)
 
 	service.repository.writeNotes(notes)
 }

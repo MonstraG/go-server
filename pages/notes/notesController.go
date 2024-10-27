@@ -127,14 +127,13 @@ func (controller Controller) ApiPostHandler(w helpers.MyWriter, r *helpers.MyReq
 		return
 	}
 
-	title := r.Form.Get("title")
-	if title == "" {
+	note := NewNote(r)
+	if note == nil {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	description := r.Form.Get("description")
 
-	controller.service.addNote(title, description, r.Username)
+	controller.service.addNote(*note)
 
 	w.Header().Set("HX-Trigger", "revalidateNotes")
 	w.WriteHeader(http.StatusOK)
