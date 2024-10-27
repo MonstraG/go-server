@@ -3,6 +3,7 @@ package todos
 import (
 	"fmt"
 	"go-server/helpers"
+	"time"
 )
 
 type Service struct {
@@ -37,8 +38,10 @@ func (service Service) addTodo(title string) {
 	todos := service.repository.readTodos()
 
 	*todos = append(*todos, Todo{
-		Id:    helpers.GenerateNextId(todos),
-		Title: title,
+		Id:      helpers.GenerateNextId(todos),
+		Title:   title,
+		Created: time.Now(),
+		Updated: time.Now(),
 	})
 
 	service.repository.writeTodos(todos)
@@ -53,6 +56,7 @@ func (service Service) setTodoDoneState(id int, done bool) error {
 	}
 
 	todo.Done = done
+	todo.Updated = time.Now()
 	service.repository.writeTodos(todos)
 	return nil
 }
