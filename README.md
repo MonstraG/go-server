@@ -53,3 +53,23 @@ Right now it features:
 #### Other notes
 
 Default address is 0.0.0.0 not localhost [because docker](https://serverfault.com/questions/1084915/still-confused-why-docker-works-when-you-make-a-process-listen-to-0-0-0-0-but-no).
+
+When I, inevitably, would want to stop docker *container* and run the app straight:
+
+```shell
+docker container stop go-server
+```
+
+Will stop the server
+
+```shell
+docker system prune -a --volumes
+```
+
+Will delete all build artefacts from disk.
+
+And, just in case, list containers:
+
+```shell
+docker container list
+```
