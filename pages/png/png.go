@@ -17,7 +17,7 @@ const maxAllowedPngSize = 10 * 1024 * 1024
 // Validate accepts a PNG, checks it according to the PNG specification
 // http://www.libpng.org/pub/png/spec/1.2/png-1.2.pdf
 // and returns parsed chunks as JSON body
-func Validate(w helpers.MyWriter, r *http.Request) {
+func Validate(w helpers.MyWriter, r *helpers.MyRequest) {
 	ok, err := isValidPNGHeader(r.Body)
 	if err != nil {
 		w.WriteResponse(http.StatusBadRequest, []byte(err.Error()))

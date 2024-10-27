@@ -35,12 +35,12 @@ func (app *App) Use(mw Middleware) {
 }
 
 // HandleFunc is a wrapper around normal http.HandleFunc but calling all Middleware-s first
-func (app *App) HandleFunc(pattern string, handlerFunc func(w helpers.MyWriter, r *http.Request)) {
+func (app *App) HandleFunc(pattern string, handlerFunc func(w helpers.MyWriter, r *helpers.MyRequest)) {
 	app.mux.HandleFunc(pattern, MyWriterWrapperMiddleware(applyMiddlewares(handlerFunc, app.middlewares)))
 }
 
 // applyMiddlewares runs all middlewares in order
-func applyMiddlewares(h func(w helpers.MyWriter, r *http.Request), middlewares []Middleware) func(w helpers.MyWriter, r *http.Request) {
+func applyMiddlewares(h func(w helpers.MyWriter, r *helpers.MyRequest), middlewares []Middleware) func(w helpers.MyWriter, r *helpers.MyRequest) {
 	for _, middleware := range middlewares {
 		h = middleware(h)
 	}

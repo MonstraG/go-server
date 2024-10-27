@@ -5,7 +5,6 @@ import (
 	"net/http"
 )
 
-// MyWriter taken from https://stackoverflow.com/a/43976633/11593686
 type MyWriter struct {
 	http.ResponseWriter
 }

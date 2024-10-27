@@ -7,7 +7,7 @@ import (
 )
 
 // ParseFormRespondErr runs http.Request ParseForm, logs errors and writes http.StatusBadRequest to http.ResponseWriter
-func ParseFormRespondErr(w MyWriter, r *http.Request) bool {
+func ParseFormRespondErr(w MyWriter, r *MyRequest) bool {
 	err := r.ParseForm()
 	if err != nil {
 		log.Println("Failed to parse form")
@@ -19,7 +19,7 @@ func ParseFormRespondErr(w MyWriter, r *http.Request) bool {
 
 // ParseIdPathValueRespondErr tries to get 'id' from r.PathValue(),
 // logging errors and writing 400 to http.ResponseWriter
-func ParseIdPathValueRespondErr(w MyWriter, r *http.Request) int {
+func ParseIdPathValueRespondErr(w MyWriter, r *MyRequest) int {
 	idParam := r.PathValue("id")
 	if idParam == "" {
 		log.Println("Empty id passed")
