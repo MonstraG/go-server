@@ -21,7 +21,7 @@ func main() {
 
 	app.Use(setup.LoggingMiddleware)
 
-	// Manual DI
+	// Pure DI
 	// Injection can be made automatic, but it turns out, it's just worse, esp. at this scale
 	todosController := todos.NewController(todos.NewService(todos.NewRepository(config)))
 	notesController := notes.NewController(notes.NewService(notes.NewRepository(config)))
@@ -32,7 +32,7 @@ func main() {
 
 	// pages
 	app.HandleFunc("GET /{$}", index.GetHandler)
-	app.HandleFunc("GET /*", notFound.GetHandler)
+	app.HandleFunc("GET /*", notFound.GetHandler) // fixme: seems to be broken
 	app.HandleFunc("GET /todos", todosController.GetHandler)
 	app.HandleFunc("GET /notes", notesController.GetHandler)
 	app.HandleFunc("GET /notes/{id}", notesController.GetNoteHandler)
