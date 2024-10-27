@@ -31,8 +31,8 @@ func main() {
 	// Probably for a bigger project, this will have to be done per-controller.
 
 	// pages
+	app.HandleFunc("GET /", notFound.GetHandler)
 	app.HandleFunc("GET /{$}", index.GetHandler)
-	app.HandleFunc("GET /*", notFound.GetHandler) // fixme: seems to be broken
 	app.HandleFunc("GET /todos", todosController.GetHandler)
 	app.HandleFunc("GET /notes", notesController.GetHandler)
 	app.HandleFunc("GET /notes/{id}", notesController.GetNoteHandler)
