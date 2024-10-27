@@ -7,10 +7,12 @@ import (
 	"path"
 )
 
-func ReadData[T any](dbFilePath string) *[]T {
+func ReadData[T any](dbFilePath string) []T {
+	var data = make([]T, 0)
+
 	_, err := os.Stat(dbFilePath)
 	if os.IsNotExist(err) {
-		return &[]T{}
+		return data
 	}
 
 	bytes, err := os.ReadFile(dbFilePath)
@@ -18,12 +20,11 @@ func ReadData[T any](dbFilePath string) *[]T {
 		log.Fatal("Failed to read database file:\n", err)
 	}
 
-	var data []T
 	err = json.Unmarshal(bytes, &data)
 	if err != nil {
 		log.Fatal("Failed to read from database file:\n", err)
 	}
-	return &data
+	return data
 }
 
 func WriteData(dbFilePath string, data any) {

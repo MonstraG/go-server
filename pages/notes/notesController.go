@@ -40,7 +40,7 @@ func (controller Controller) GetListHandler(w helpers.MyWriter, _ *helpers.MyReq
 	notes := controller.service.readNotes()
 
 	pageModel := ListDTO{
-		Notes: *notes,
+		Notes: notes,
 	}
 
 	err := notesListTemplate.Execute(w, pageModel)

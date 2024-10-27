@@ -16,7 +16,7 @@ func NewService(repository Repository) Service {
 	}
 }
 
-func (service Service) readNotes() *[]Note {
+func (service Service) readNotes() []Note {
 	return service.repository.readNotes()
 }
 
@@ -28,7 +28,7 @@ func (service Service) deleteNoteById(id int) error {
 		return fmt.Errorf("note with id %d is not found", id)
 	}
 
-	*notes = helpers.RemoveAt(*notes, index)
+	notes = helpers.RemoveAt(notes, index)
 	service.repository.writeNotes(notes)
 
 	return nil
@@ -54,7 +54,7 @@ func (service Service) updateNote(id int, title string, description string, upda
 func (service Service) addNote(title string, description string, updatedBy string) {
 	notes := service.repository.readNotes()
 
-	*notes = append(*notes, Note{
+	notes = append(notes, Note{
 		Id:          helpers.GenerateNextId(notes),
 		Title:       title,
 		Description: description,

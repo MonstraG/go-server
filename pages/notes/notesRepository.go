@@ -18,10 +18,10 @@ func NewRepository(config setup.AppConfig) Repository {
 	}
 }
 
-func (repository Repository) readNotes() *[]Note {
+func (repository Repository) readNotes() []Note {
 	return helpers.ReadData[Note](repository.dbFilePath)
 }
 
-func (repository Repository) writeNotes(notes *[]Note) {
+func (repository Repository) writeNotes(notes []Note) {
 	helpers.WriteData(repository.dbFilePath, notes)
 }

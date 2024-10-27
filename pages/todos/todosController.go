@@ -41,7 +41,7 @@ func (controller Controller) GetListHandler(w helpers.MyWriter, _ *helpers.MyReq
 	todos := controller.service.readTodos()
 
 	pageModel := ListDTO{
-		Todos: *todos,
+		Todos: todos,
 	}
 
 	err := todosListTemplate.Execute(w, pageModel)
@@ -87,13 +87,13 @@ func (controller Controller) ApiPostHandler(w helpers.MyWriter, r *helpers.MyReq
 		return
 	}
 
-	title := r.Form.Get("title")
-	if title == "" {
+	todo := NewTodo(r)
+	if todo == nil {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
-	controller.service.addTodo(title, r.Username)
+	controller.service.addTodo(*todo)
 
 	w.Header().Set("HX-Trigger", "revalidateTodos")
 	w.WriteHeader(http.StatusOK)

@@ -10,19 +10,19 @@ func RemoveAt[T interface{}](slice []T, index int) []T {
 }
 
 // FindByID returns index and element in slice together with a pointer to an element, allowing modifications
-func FindByID[T Identifiable](items *[]T, id int) (int, *T) {
-	for i := range *items {
-		if (*items)[i].ID() == id {
-			return i, &(*items)[i]
+func FindByID[T Identifiable](items []T, id int) (int, *T) {
+	for i := range items {
+		if items[i].ID() == id {
+			return i, &items[i]
 		}
 	}
 	return 0, nil
 }
 
 // GenerateNextId finds next unoccupied id
-func GenerateNextId[T Identifiable](items *[]T) int {
+func GenerateNextId[T Identifiable](items []T) int {
 	maxId := 0
-	for _, todo := range *items {
+	for _, todo := range items {
 		if maxId < todo.ID() {
 			maxId = todo.ID()
 		}

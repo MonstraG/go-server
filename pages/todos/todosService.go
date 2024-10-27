@@ -16,7 +16,7 @@ func NewService(repository Repository) Service {
 	}
 }
 
-func (service Service) readTodos() *[]Todo {
+func (service Service) readTodos() []Todo {
 	return service.repository.readTodos()
 }
 
@@ -28,22 +28,18 @@ func (service Service) deleteTodoById(id int) error {
 		return fmt.Errorf("todo with id %d is not found", id)
 	}
 
-	*todos = helpers.RemoveAt(*todos, index)
+	todos = helpers.RemoveAt(todos, index)
 	service.repository.writeTodos(todos)
 
 	return nil
 }
 
-func (service Service) addTodo(title string, updatedBy string) {
+func (service Service) addTodo(todo Todo) {
 	todos := service.repository.readTodos()
 
-	*todos = append(*todos, Todo{
-		Id:        helpers.GenerateNextId(todos),
-		Title:     title,
-		Created:   time.Now(),
-		Updated:   time.Now(),
-		UpdatedBy: updatedBy,
-	})
+	todo.Id = helpers.GenerateNextId(todos)
+
+	todos = append(todos, todo)
 
 	service.repository.writeTodos(todos)
 }

@@ -18,10 +18,10 @@ func NewRepository(config setup.AppConfig) Repository {
 	}
 }
 
-func (repository Repository) readTodos() *[]Todo {
+func (repository Repository) readTodos() []Todo {
 	return helpers.ReadData[Todo](repository.dbFilePath)
 }
 
-func (repository Repository) writeTodos(todos *[]Todo) {
+func (repository Repository) writeTodos(todos []Todo) {
 	helpers.WriteData(repository.dbFilePath, todos)
 }
