@@ -2,7 +2,9 @@ package pages
 
 import (
 	"go-server/helpers"
+	"log"
 	"net/http"
+	"os"
 	"path/filepath"
 )
 
@@ -14,7 +16,25 @@ import (
 func PublicHandler(w helpers.MyWriter, r *http.Request) {
 	lw := helpers.MyWriter{ResponseWriter: w}
 	pathQueryParam := r.PathValue("path")
-	file := filepath.Join("public", pathQueryParam)
+	filename := filepath.Join("public", pathQueryParam)
+	fileInfo, err := os.Stat(filename)
+	if err != nil {
+		log.Printf("Failed to stat file %s: %v", filename, err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	if fileInfo.IsDir() {
+		log.Printf("Failed to stat file: %s, it's a directory", filename)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
 
-	http.ServeFile(lw, r, file)
+	file, err := os.Open(filename)
+	if err != nil {
+		log.Printf("Failed to open file %s: %v", filename, err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	http.ServeContent(lw, r, filename, fileInfo.ModTime(), file)
 }
