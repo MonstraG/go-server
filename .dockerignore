@@ -1,8 +1,9 @@
 .git
 .idea
-Dockerfile
-.dockerignore
 data
+.dockerignore
 .gitignore
-README.md
 build_size.log
+Dockerfile
+README.md
+Makefile
