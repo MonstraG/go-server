@@ -3,6 +3,7 @@ package notes
 import (
 	"go-server/helpers"
 	"go-server/pages"
+	"go-server/pages/notFound"
 	"html/template"
 	"log"
 	"net/http"
@@ -65,6 +66,11 @@ func (controller Controller) GetNoteHandler(w helpers.MyWriter, r *helpers.MyReq
 	notes := controller.service.readNotes()
 	_, note := helpers.FindByID(notes, id)
 
+	if note == nil {
+		notFound.GetHandler(w, r)
+		return
+	}
+
 	data := notePageDTO{
 		PageData: pages.PageData{PageTitle: note.Title},
 		Note:     *note,
@@ -86,6 +92,11 @@ func (controller Controller) GetNoteEditHandler(w helpers.MyWriter, r *helpers.M
 
 	notes := controller.service.readNotes()
 	_, note := helpers.FindByID(notes, id)
+
+	if note == nil {
+		notFound.GetHandler(w, r)
+		return
+	}
 
 	err := noteEditTemplate.Execute(w, note)
 	if err != nil {
