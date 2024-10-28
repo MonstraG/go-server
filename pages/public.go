@@ -12,9 +12,7 @@ import (
 	"path/filepath"
 )
 
-// todo: add gzip
-
-func PublicHandler(w helpers.MyWriter, r *helpers.MyRequest) {
+func PublicHandler(w *helpers.MyWriter, r *helpers.MyRequest) {
 	lw := helpers.MyWriter{ResponseWriter: w}
 	pathQueryParam := r.PathValue("path")
 	filename := filepath.Join("public", pathQueryParam)
@@ -43,7 +41,7 @@ func PublicHandler(w helpers.MyWriter, r *helpers.MyRequest) {
 	readSeeker := bytes.NewReader(file)
 
 	// this handles ETag matches inside
-	http.ServeContent(lw, &r.Request, filename, fileInfo.ModTime(), readSeeker)
+	http.ServeContent(&lw, &r.Request, filename, fileInfo.ModTime(), readSeeker)
 }
 
 var hasher = sha256.New()

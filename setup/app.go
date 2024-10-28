@@ -35,12 +35,12 @@ func (app *App) Use(mw Middleware) {
 }
 
 // HandleFunc is a wrapper around normal http.HandleFunc but calling all Middleware-s first
-func (app *App) HandleFunc(pattern string, handlerFunc func(w helpers.MyWriter, r *helpers.MyRequest)) {
+func (app *App) HandleFunc(pattern string, handlerFunc func(w *helpers.MyWriter, r *helpers.MyRequest)) {
 	app.mux.HandleFunc(pattern, MyWriterWrapperMiddleware(applyMiddlewares(handlerFunc, app.middlewares)))
 }
 
 // applyMiddlewares runs all middlewares in order
-func applyMiddlewares(h func(w helpers.MyWriter, r *helpers.MyRequest), middlewares []Middleware) func(w helpers.MyWriter, r *helpers.MyRequest) {
+func applyMiddlewares(h func(w *helpers.MyWriter, r *helpers.MyRequest), middlewares []Middleware) func(w *helpers.MyWriter, r *helpers.MyRequest) {
 	for _, middleware := range middlewares {
 		h = middleware(h)
 	}
@@ -49,6 +49,6 @@ func applyMiddlewares(h func(w helpers.MyWriter, r *helpers.MyRequest), middlewa
 
 // ListenAndServe is a wrapper around normal http.ListenAndServe
 func (app *App) ListenAndServe() error {
-	log.Println(fmt.Sprintf("Starting server on %s", app.config.Host))
+	log.Println(fmt.Sprintf("Starting server on http://%s", app.config.Host))
 	return http.ListenAndServe(app.config.Host, app.mux)
 }

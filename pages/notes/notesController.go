@@ -24,30 +24,22 @@ var notesPageData = pages.PageData{
 	PageTitle: "My note list",
 }
 
-type ListDTO struct {
-	Notes []Note
-}
-
-func (controller Controller) GetHandler(w helpers.MyWriter, _ *helpers.MyRequest) {
-	err := notesTemplate.Execute(w, notesPageData)
-	if err != nil {
-		log.Fatal("Failed to render notes template:\n", err)
-	}
+func (controller Controller) GetHandler(w *helpers.MyWriter, _ *helpers.MyRequest) {
+	w.ExecuteTemplate(notesTemplate, notesPageData)
 }
 
 var notesListTemplate = template.Must(template.ParseFiles("pages/notes/tmpl/notesList.gohtml"))
 
-func (controller Controller) GetListHandler(w helpers.MyWriter, _ *helpers.MyRequest) {
-	notes := controller.service.readNotes()
+type ListDTO struct {
+	Notes []Note
+}
 
-	pageModel := ListDTO{
-		Notes: notes,
+func (controller Controller) GetListHandler(w *helpers.MyWriter, _ *helpers.MyRequest) {
+	data := ListDTO{
+		Notes: controller.service.readNotes(),
 	}
 
-	err := notesListTemplate.Execute(w, pageModel)
-	if err != nil {
-		log.Fatal("Failed to render notes template:\n", err)
-	}
+	w.ExecuteTemplate(notesListTemplate, data)
 }
 
 var noteTemplate = template.Must(template.ParseFiles("pages/base.gohtml", "pages/notes/tmpl/note.gohtml"))
@@ -57,7 +49,7 @@ type notePageDTO struct {
 	Note Note
 }
 
-func (controller Controller) GetNoteHandler(w helpers.MyWriter, r *helpers.MyRequest) {
+func (controller Controller) GetNoteHandler(w *helpers.MyWriter, r *helpers.MyRequest) {
 	id := helpers.ParseIdPathValueRespondErr(w, r)
 	if id == 0 {
 		return
@@ -76,15 +68,12 @@ func (controller Controller) GetNoteHandler(w helpers.MyWriter, r *helpers.MyReq
 		Note:     *note,
 	}
 
-	err := noteTemplate.Execute(w, data)
-	if err != nil {
-		log.Fatal("Failed to render notes template:\n", err)
-	}
+	w.ExecuteTemplate(noteTemplate, data)
 }
 
 var noteEditTemplate = template.Must(template.ParseFiles("pages/notes/tmpl/noteEdit.gohtml"))
 
-func (controller Controller) GetNoteEditHandler(w helpers.MyWriter, r *helpers.MyRequest) {
+func (controller Controller) GetNoteEditHandler(w *helpers.MyWriter, r *helpers.MyRequest) {
 	id := helpers.ParseIdPathValueRespondErr(w, r)
 	if id == 0 {
 		return
@@ -98,13 +87,10 @@ func (controller Controller) GetNoteEditHandler(w helpers.MyWriter, r *helpers.M
 		return
 	}
 
-	err := noteEditTemplate.Execute(w, note)
-	if err != nil {
-		log.Fatal("Failed to render notes template:\n", err)
-	}
+	w.ExecuteTemplate(noteEditTemplate, note)
 }
 
-func (controller Controller) ApiPutHandler(w helpers.MyWriter, r *helpers.MyRequest) {
+func (controller Controller) ApiPutHandler(w *helpers.MyWriter, r *helpers.MyRequest) {
 	id := helpers.ParseIdPathValueRespondErr(w, r)
 	if id == 0 {
 		return
@@ -132,7 +118,7 @@ func (controller Controller) ApiPutHandler(w helpers.MyWriter, r *helpers.MyRequ
 	w.WriteHeader(http.StatusOK)
 }
 
-func (controller Controller) ApiPostHandler(w helpers.MyWriter, r *helpers.MyRequest) {
+func (controller Controller) ApiPostHandler(w *helpers.MyWriter, r *helpers.MyRequest) {
 	ok := helpers.ParseFormRespondErr(w, r)
 	if !ok {
 		return
@@ -150,7 +136,7 @@ func (controller Controller) ApiPostHandler(w helpers.MyWriter, r *helpers.MyReq
 	w.WriteHeader(http.StatusOK)
 }
 
-func (controller Controller) ApiDelHandler(w helpers.MyWriter, r *helpers.MyRequest) {
+func (controller Controller) ApiDelHandler(w *helpers.MyWriter, r *helpers.MyRequest) {
 	id := helpers.ParseIdPathValueRespondErr(w, r)
 	if id == 0 {
 		return
