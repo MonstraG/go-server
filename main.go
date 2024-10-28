@@ -5,7 +5,6 @@ import (
 	"go-server/pages/index"
 	"go-server/pages/notFound"
 	"go-server/pages/notes"
-	"go-server/pages/png"
 	"go-server/pages/todos"
 	"go-server/setup"
 	"log"
@@ -53,7 +52,6 @@ func main() {
 	app.HandleFunc("PUT /api/notes/{id}", notesController.ApiPutHandler)
 	app.HandleFunc("POST /api/notes", notesController.ApiPostHandler)
 	app.HandleFunc("DELETE /api/notes/{id}", notesController.ApiDelHandler)
-	app.HandleFunc("POST /api/png/validate", png.Validate)
 
 	// resources
 	app.HandleFunc("GET /public/{path...}", pages.PublicHandler)
