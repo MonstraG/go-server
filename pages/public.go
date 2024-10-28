@@ -12,8 +12,6 @@ import (
 	"path/filepath"
 )
 
-// todo: add gzip
-
 func PublicHandler(w helpers.MyWriter, r *helpers.MyRequest) {
 	lw := helpers.MyWriter{ResponseWriter: w}
 	pathQueryParam := r.PathValue("path")
